@@ -616,20 +616,14 @@
   /* ============ FOOTER ============ */
   footer.site { border-top:1px solid var(--border); padding:40px 0 60px; margin-top:40px; text-align:center; }
   footer.site .prev-next { display:grid; grid-template-columns:1fr; gap:14px; max-width:760px; margin:0 auto 30px; }
-  @media (min-width: 720px) { footer.site .prev-next { grid-template-columns: 1fr 1fr; } }
-  footer.site .pn {
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:14px; padding:20px; box-shadow:var(--shadow);
-    text-decoration:none; color:inherit; transition:all .2s ease;
-    display:block; text-align:left;
-  }
-  footer.site .pn:hover { border-color:var(--primary); transform: translateY(-2px); box-shadow:var(--shadow-lg); }
-  footer.site .pn-label { font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:6px; }
-  footer.site .pn-name { font-family:"Mitr",sans-serif; font-size:18px; font-weight:600; margin-bottom:4px; }
-  footer.site .pn-name .p { color:var(--primary); font-family:"IBM Plex Mono",monospace; font-size:15px; }
-  footer.site .pn-desc { font-size:13px; color:var(--text-soft); margin:0; }
-  footer.site .pn.next .pn-name::after { content: " →"; color: var(--primary); }
-  footer.site .pn.prev .pn-label::before { content: "← "; }
+  @media (min-width: 680px) { footer.site .prev-next { grid-template-columns:1fr 1fr; } }
+  footer.site .nx { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:var(--shadow); text-decoration:none; color:inherit; transition:all .2s; display:block; text-align:left; }
+  footer.site .nx:hover { border-color:var(--primary); transform:translateY(-2px); }
+  footer.site .nx-label { font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:8px; }
+  footer.site .nx-name { font-family:"Mitr",sans-serif; font-size:20px; font-weight:600; margin-bottom:6px; }
+  footer.site .nx-name .p { color:var(--primary); font-family:"IBM Plex Mono",monospace; font-size:16px; }
+  footer.site .nx-desc { font-size:13px; color:var(--text-soft); margin:0; }
+  footer.site .nx.next { text-align:right; }
   footer.site .credit { font-size:13px; color:var(--muted); }
   footer.site .credit a { color:var(--accent); text-decoration:none; }
 
@@ -1069,15 +1063,15 @@
 <footer class="site">
   <div class="wrap">
     <div class="prev-next">
-      <a href="flex-wrap.html" class="pn prev">
-        <div class="pn-label">ก่อนหน้า</div>
-        <div class="pn-name"><span class="p">flex-wrap</span></div>
-        <p class="pn-desc">ตัวกำหนดว่า items จะบีบ หรือขึ้นบรรทัดใหม่ — ครึ่งหนึ่งของ flex-flow</p>
+      <a class="nx" href="flex-wrap.html">
+        <div class="nx-label">← ก่อนหน้า</div>
+        <div class="nx-name"><span class="p">flex-wrap</span></div>
+        <p class="nx-desc">ตัวกำหนดว่า items จะบีบ หรือขึ้นบรรทัดใหม่ — ครึ่งหนึ่งของ flex-flow</p>
       </a>
-      <a href="justify-content.html" class="pn next">
-        <div class="pn-label">ถัดไป</div>
-        <div class="pn-name"><span class="p">justify-content</span></div>
-        <p class="pn-desc">จัด items บน main-axis — start, center, end, space-between...</p>
+      <a class="nx next" href="justify-content.html">
+        <div class="nx-label">ถัดไป →</div>
+        <div class="nx-name"><span class="p">justify-content</span></div>
+        <p class="nx-desc">จัด items บน main-axis — start, center, end, space-between...</p>
       </a>
     </div>
     <p class="credit">CSS Flexbox Lab · อ้างอิง <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/flex-flow" target="_blank" rel="noopener">MDN</a> · ทำด้วย ❤️</p>
