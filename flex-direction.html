@@ -428,7 +428,7 @@
   .axis-items .it {
     min-width: 48px; height: 48px;
     border-radius: 9px;
-    background: rgba(124, 92, 255, .12);
+    background: var(--primary-soft);
     border: 2px solid var(--primary);
     color: var(--primary);
     font-family: "IBM Plex Mono", monospace;
@@ -436,7 +436,6 @@
     font-size: 16px;
     display: flex; align-items: center; justify-content: center;
   }
-  [data-theme="dark"] .axis-items .it { background: rgba(255,107,84,.12); }
 
   /* the axis lines — thick, with arrow heads */
   .axis-bar {
@@ -532,12 +531,12 @@
   .axis-label.cross-l { background: var(--accent); }
 
   /* label positions for ROW */
-  .axis-stage[data-dir="row"] .axis-label.main-l { top: calc(50% - 36px); left: 50%; transform: translateX(-50%); }
-  .axis-stage[data-dir="row"] .axis-label.cross-l { left: calc(50% + 18px); top: 14px; }
+  .axis-stage[data-dir="row"] .axis-label.main-l { top: calc(50% - 54px); left: 50%; transform: translateX(-50%); }
+  .axis-stage[data-dir="row"] .axis-label.cross-l { left: calc(50% + 36px); top: 14px; }
 
   /* label positions for COLUMN */
-  .axis-stage[data-dir="column"] .axis-label.main-l { left: calc(50% + 18px); top: 14px; }
-  .axis-stage[data-dir="column"] .axis-label.cross-l { top: calc(50% - 36px); left: 50%; transform: translateX(-50%); }
+  .axis-stage[data-dir="column"] .axis-label.main-l { left: calc(50% + 36px); top: 14px; }
+  .axis-stage[data-dir="column"] .axis-label.cross-l { top: calc(50% - 54px); left: 50%; transform: translateX(-50%); }
 
   .axis-readout {
     display: grid;
