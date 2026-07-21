@@ -196,12 +196,26 @@
     white-space: nowrap;
   }
 
+  .container-badge {
+    position: absolute;
+    left: 0; top: -22px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    z-index: 10;
+  }
   .demo {
     display: flex;
     gap: 10px;
     min-height: 200px;
     transition: all .35s cubic-bezier(.4,0,.2,1);
-    border: 2px dashed transparent;
+    border: 1px dashed var(--border-strong);
     border-radius: 8px;
   }
   .demo .item {
@@ -916,6 +930,7 @@
     <div class="mega-body">
       <div class="mega-stage">
         <div class="stage-frame" id="stageFrame">
+          <div class="container-badge" id="containerSize">container: --px × --px</div>
           <div class="demo" id="megaDemo" data-axis="row">
             <div class="axis-overlay" id="axisOverlay">
               <span class="axis-line axis-main">main-axis ↦</span>
@@ -1352,6 +1367,9 @@ function renderMega() {
   document.querySelectorAll('.value-card').forEach(c => {
     c.classList.toggle('selected', c.dataset.value === state.direction);
   });
+  const rect = megaDemo.getBoundingClientRect();
+  const badge = document.getElementById('containerSize');
+  if (badge) badge.textContent = `container: ${Math.round(rect.width)}px × ${Math.round(rect.height)}px`;
 }
 
 // bind property buttons
@@ -1410,11 +1428,15 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     const dx = e.clientX - startX;
     const newW = Math.max(180, Math.min(640, startW + dx));
     frame.style.setProperty('--stage-w', newW + 'px');
+    const rect = megaDemo.getBoundingClientRect();
+    const badge = document.getElementById('containerSize');
+    if (badge) badge.textContent = `container: ${Math.round(rect.width)}px × ${Math.round(rect.height)}px`;
   });
   handle.addEventListener('pointerup', e => { dragging = false; handle.releasePointerCapture(e.pointerId); });
 })();
 
 renderMega();
+window.addEventListener('resize', renderMega);
 
 /* ============================================================
    VALUE CARDS → push to playground

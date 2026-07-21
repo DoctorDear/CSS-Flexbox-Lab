@@ -206,6 +206,21 @@
       linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 24px 24px,
       var(--demo-bg);
   }
+  .stage-frame { position: relative; width: 100%; max-width: 420px; }
+  .container-badge {
+    position: absolute;
+    left: 0; top: -22px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    z-index: 10;
+  }
   .demo {
     display: flex; gap: 10px;
     width: 100%; max-width: 420px;
@@ -622,11 +637,14 @@
     </div>
     <div class="master-body">
       <div class="master-stage">
-        <div class="demo" id="masterDemo">
-          <div class="item">1</div>
-          <div class="item">2</div>
-          <div class="item">3</div>
-          <div class="item">4</div>
+        <div class="stage-frame">
+          <div class="container-badge" id="containerSize">container: --px × --px</div>
+          <div class="demo" id="masterDemo">
+            <div class="item">1</div>
+            <div class="item">2</div>
+            <div class="item">3</div>
+            <div class="item">4</div>
+          </div>
         </div>
       </div>
       <div class="master-panel">
@@ -809,6 +827,9 @@ function render() {
     const p = g.dataset.prop;
     g.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.value === state[p]));
   });
+  const rect = demo.getBoundingClientRect();
+  const badge = document.getElementById('containerSize');
+  if (badge) badge.textContent = `container: ${Math.round(rect.width)}px × ${Math.round(rect.height)}px`;
 }
 document.querySelectorAll('.pg-btns').forEach(g => {
   g.addEventListener('click', e => {
@@ -817,6 +838,7 @@ document.querySelectorAll('.pg-btns').forEach(g => {
   });
 });
 render();
+window.addEventListener('resize', render);
 
 /* ============ THEME ============ */
 function applyTheme(t) {

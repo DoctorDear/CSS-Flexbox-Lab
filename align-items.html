@@ -75,6 +75,21 @@
   @media (min-width: 760px) { .mega-body { grid-template-columns: 1fr 280px; } }
   .mega-stage { padding: 28px; background: linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 24px 24px, var(--demo-bg); border-right: 1px solid var(--border); min-height: 320px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   [data-theme="dark"] .mega-stage { background: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 24px 24px, var(--demo-bg); }
+  .stage-frame { position: relative; width: 100%; max-width: 460px; }
+  .container-badge {
+    position: absolute;
+    left: 0; top: -22px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    z-index: 10;
+  }
   .demo { display: flex; gap: 10px; width: 100%; max-width: 460px; height: 200px; padding: 14px; border: 1px dashed var(--border-strong); border-radius: 8px; transition: all .35s cubic-bezier(.4,0,.2,1); background: color-mix(in srgb, var(--surface) 50%, transparent); position: relative; }
   .demo .item { flex: 0 0 auto; min-width: 60px; display: flex; align-items: center; justify-content: center; border-radius: 9px; color:#fff; font-family:"IBM Plex Mono",monospace; font-weight:600; box-shadow: var(--shadow); transition: all .35s ease; }
   .demo .item:nth-child(4n+1) { background: var(--item-a); }
@@ -379,11 +394,14 @@
     </div>
     <div class="mega-body">
       <div class="mega-stage">
-        <div class="demo" id="megaDemo">
-          <div class="item">1<span class="baseline-marker" style="display:inline-block; width:0; height:0; vertical-align:baseline;"></span></div>
-          <div class="item">2</div>
-          <div class="item">3</div>
-          <div class="playground-baseline" id="playgroundBaseline"></div>
+        <div class="stage-frame">
+          <div class="container-badge" id="containerSize">container: --px × --px</div>
+          <div class="demo" id="megaDemo">
+            <div class="item">1<span class="baseline-marker" style="display:inline-block; width:0; height:0; vertical-align:baseline;"></span></div>
+            <div class="item">2</div>
+            <div class="item">3</div>
+            <div class="playground-baseline" id="playgroundBaseline"></div>
+          </div>
         </div>
       </div>
       <div class="mega-panel">
@@ -750,6 +768,9 @@ function render(){
     g.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value===state[key]));
   });
   document.querySelectorAll('.value-card').forEach(c=>c.classList.toggle('selected',c.dataset.value===state.align));
+  const rect = megaDemo.getBoundingClientRect();
+  const badge = document.getElementById('containerSize');
+  if (badge) badge.textContent = `container: ${Math.round(rect.width)}px × ${Math.round(rect.height)}px`;
 }
 
 document.querySelectorAll('.pg-btns').forEach(g=>{
@@ -770,6 +791,7 @@ document.querySelectorAll('.value-card').forEach(c=>{
   });
 });
 render();
+window.addEventListener('resize', render);
 
 /* GAME LOGIC */
 const VALS=['stretch','flex-start','center','flex-end','baseline'];

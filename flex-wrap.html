@@ -195,14 +195,19 @@
     color: var(--muted);
     white-space: nowrap;
   }
-  .stage-frame .width-readout {
+  .container-badge {
     position: absolute;
-    left: -2px; bottom: -28px;
-    font-family:"IBM Plex Mono",monospace;
-    font-size: 10px;
-    color: var(--primary);
-    white-space: nowrap;
+    left: 0; top: -22px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
     font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    z-index: 10;
   }
 
   .demo {
@@ -210,7 +215,7 @@
     gap: 10px;
     min-height: 200px;
     transition: flex-wrap .35s cubic-bezier(.4,0,.2,1);
-    border: 2px dashed transparent;
+    border: 1px dashed var(--border-strong);
     border-radius: 8px;
   }
   .demo .item {
@@ -688,10 +693,10 @@
     <div class="mega-body">
       <div class="mega-stage">
         <div class="stage-frame" id="stageFrame" style="--stage-w:440px">
+          <div class="container-badge" id="containerSize">container: --px × --px</div>
           <div class="demo" id="megaDemo"></div>
           <div class="resize-handle" id="resizeHandle" title="ลากเพื่อปรับความกว้าง"></div>
           <div class="resize-hint">← ลากฉัน (ดู items ห่อ)</div>
-          <div class="width-readout" id="widthReadout">440px</div>
         </div>
       </div>
       <div class="mega-panel">
@@ -989,7 +994,6 @@ const state = {
 const megaDemo = document.getElementById('megaDemo');
 const megaCode = document.getElementById('megaCode');
 const stageFrame = document.getElementById('stageFrame');
-const widthReadout = document.getElementById('widthReadout');
 
 function renderItems(container, n) {
   container.innerHTML = '';
@@ -1004,7 +1008,9 @@ function renderItems(container, n) {
 function applyWidth(w) {
   state.width = w;
   stageFrame.style.setProperty('--stage-w', w + 'px');
-  widthReadout.textContent = w + 'px';
+  const rect = megaDemo.getBoundingClientRect();
+  const badge = document.getElementById('containerSize');
+  if (badge) badge.textContent = `container: ${Math.round(rect.width)}px × ${Math.round(rect.height)}px`;
   document.getElementById('widthLabel').textContent = w;
 }
 
@@ -1058,7 +1064,9 @@ function renderMega() {
   });
 
   // update width readout + label
-  widthReadout.textContent = state.width + 'px';
+  const rect = megaDemo.getBoundingClientRect();
+  const badge = document.getElementById('containerSize');
+  if (badge) badge.textContent = `container: ${Math.round(rect.width)}px × ${Math.round(rect.height)}px`;
   document.getElementById('widthLabel').textContent = state.width;
 }
 
@@ -1121,6 +1129,7 @@ document.getElementById('resetBtn').addEventListener('click', () => {
 
 applyWidth(440);
 renderMega();
+window.addEventListener('resize', renderMega);
 
 /* ============================================================
    VALUE CARDS → push to playground

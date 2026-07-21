@@ -197,12 +197,26 @@
   }
 
   /* The demo container — styles set by JS to show effect of display value */
+  .container-badge {
+    position: absolute;
+    left: 0; top: -22px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    z-index: 10;
+  }
   .demo {
     display: flex;
     gap: 10px;
     min-height: 120px;
     transition: all .35s cubic-bezier(.4,0,.2,1);
-    border: 2px dashed transparent;
+    border: 1px dashed var(--border-strong);
     border-radius: 8px;
   }
   .demo .item {
@@ -740,6 +754,7 @@
     <div class="mega-body">
       <div class="mega-stage">
         <div class="stage-frame" id="stageFrame">
+          <div class="container-badge" id="containerSize">container: --px × --px</div>
           <!-- Block-level demo: shows full-width behavior -->
           <div class="demo-row" style="margin-bottom:18px">
             <div class="label">▼ กล่องเดโม + ข้อความตามหลัง (ดูว่าขึ้นบรรทัดใหม่ไหม)</div>
@@ -1174,6 +1189,9 @@ function renderMega() {
     g.querySelectorAll('button').forEach(b => { b.disabled = !isFlex(d); });
     g.style.opacity = isFlex(d) ? '1' : '.45';
   });
+  const rect = megaDemo.getBoundingClientRect();
+  const badge = document.getElementById('containerSize');
+  if (badge) badge.textContent = `container: ${Math.round(rect.width)}px × ${Math.round(rect.height)}px`;
 }
 
 // bind property buttons
@@ -1220,11 +1238,15 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     const dx = e.clientX - startX;
     const newW = Math.max(220, Math.min(640, startW + dx));
     frame.style.setProperty('--stage-w', newW + 'px');
+    const rect = megaDemo.getBoundingClientRect();
+    const badge = document.getElementById('containerSize');
+    if (badge) badge.textContent = `container: ${Math.round(rect.width)}px × ${Math.round(rect.height)}px`;
   });
   handle.addEventListener('pointerup', e => { dragging = false; handle.releasePointerCapture(e.pointerId); });
 })();
 
 renderMega();
+window.addEventListener('resize', renderMega);
 
 /* ============================================================
    VALUE CARDS → push to playground
