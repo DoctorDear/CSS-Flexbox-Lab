@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>align-items คืออะไร? — CSS Flexbox Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #faf9f6; --bg-soft: #f1efe9; --surface: #ffffff; --surface-2: #f7f5f0;
+    --text: #1a1a1a; --text-soft: #555; --muted: #888;
+    --border: #e4e1d8; --border-strong: #d4cfc2;
+    --primary: #c8412d; --primary-soft: #fde8e4;
+    --accent: #1f6feb; --accent-soft: #e3edff;
+    --ok: #1a7f5a; --ok-soft: #d8f3e7;
+    --warn: #b8731a; --warn-soft: #fcefd6;
+    --demo-bg: #ffffff; --demo-border: #e4e1d8;
+    --code-bg: #f6f3ec; --code-text: #2a2a2a;
+    --code-k: #c8412d; --code-v: #1f6feb; --code-c: #8a8578; --code-s: #b8731a;
+    --item-a: #c8412d; --item-b: #1f6feb; --item-c: #555; --item-d: #b8731a;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.05);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,.06), 0 20px 40px rgba(0,0,0,.08);
+  }
+  [data-theme="dark"] {
+    --bg: #131520; --bg-soft: #1a1d2e; --surface: #1e2236; --surface-2: #232848;
+    --text: #e8ebff; --text-soft: #b4b9d6; --muted: #7e85a8;
+    --border: #2d3160; --border-strong: #3d4280;
+    --primary: #ff6b54; --primary-soft: #3a1d1a;
+    --accent: #5ea8ff; --accent-soft: #1a2748;
+    --ok: #4dd6a8; --ok-soft: #16321f;
+    --warn: #f0b860; --warn-soft: #3a2a0e;
+    --demo-bg: #0c0f1e; --demo-border: #2d3160;
+    --code-bg: #0c0f1e; --code-text: #d7def7;
+    --code-k: #ff8aaf; --code-v: #8be9fd; --code-c: #6b7394; --code-s: #f1fa8c;
+    --item-a: #ff6b54; --item-b: #5ea8ff; --item-c: #b4b9d6; --item-d: #f0b860;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.3);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,.3), 0 20px 40px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; font-family: "IBM Plex Sans Thai","Mitr",system-ui,sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.75; font-size: 17px;
+    transition: background .3s ease, color .3s ease; -webkit-font-smoothing: antialiased;
+  }
+  nav.topbar { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(12px); background: color-mix(in srgb, var(--bg) 85%, transparent); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; }
+  .brand { display:flex; align-items:center; gap:10px; font-family:"Mitr",sans-serif; font-weight:600; font-size:15px; color:var(--text); text-decoration:none; }
+  .brand-mark { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--primary); color:#fff; border-radius:7px; font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:600; }
+  .brand .sep { color:var(--muted); font-weight:400; }
+  .brand .prop-name { color:var(--primary); font-family:"IBM Plex Mono",monospace; font-size:14px; }
+  .theme-toggle { display:inline-flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--border); color:var(--text-soft); padding:7px 12px; border-radius:999px; cursor:pointer; font-family:inherit; font-size:13px; transition:all .2s ease; }
+  .theme-toggle:hover { border-color:var(--primary); color:var(--text); }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+
+  header.hero { padding: 60px 0 30px; text-align: center; }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:var(--primary); background:var(--primary-soft); padding:6px 14px; border-radius:999px; margin-bottom:24px; }
+  .eyebrow .dot { width:6px; height:6px; background:var(--primary); border-radius:50%; }
+  h1.title { font-family:"IBM Plex Mono",monospace; font-size:clamp(34px,7vw,62px); font-weight:600; margin:0 0 18px; line-height:1.05; letter-spacing:-1.5px; }
+  h1.title .brace { color:var(--muted); font-weight:400; }
+  h1.title .name { color:var(--primary); }
+  .lede { font-size:20px; color:var(--text-soft); max-width:640px; margin:0 auto; line-height:1.55; font-weight:300; }
+  .lede b { color:var(--text); font-weight:600; }
+  .lede code, p code, li code { font-family:"IBM Plex Mono",monospace; font-size:.86em; background:var(--surface-2); border:1px solid var(--border); padding:2px 7px; border-radius:5px; color:var(--primary); }
+  .hero-meta { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin-top:28px; font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted); }
+  .hero-meta b { color:var(--text-soft); font-weight:500; }
+
+  .mega { margin: 40px 0 60px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow-lg); overflow: hidden; }
+  .mega-header { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--border); background:var(--surface-2); }
+  .mega-title { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:8px; }
+  .mega-dots { display:flex; gap:6px; }
+  .mega-dots span { width:10px; height:10px; border-radius:50%; background:var(--border-strong); }
+  .mega-body { display:grid; grid-template-columns:1fr; }
+  @media (min-width: 760px) { .mega-body { grid-template-columns: 1fr 280px; } }
+  .mega-stage { padding: 28px; background: linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 24px 24px, var(--demo-bg); border-right: 1px solid var(--border); min-height: 320px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  [data-theme="dark"] .mega-stage { background: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 24px 24px, var(--demo-bg); }
+  .demo { display: flex; gap: 10px; width: 100%; max-width: 460px; height: 200px; padding: 14px; border: 1px dashed var(--border-strong); border-radius: 8px; transition: all .35s cubic-bezier(.4,0,.2,1); background: color-mix(in srgb, var(--surface) 50%, transparent); position: relative; }
+  .demo .item { flex: 0 0 auto; min-width: 60px; display: flex; align-items: center; justify-content: center; border-radius: 9px; color:#fff; font-family:"IBM Plex Mono",monospace; font-weight:600; box-shadow: var(--shadow); transition: all .35s ease; }
+  .demo .item:nth-child(4n+1) { background: var(--item-a); }
+  .demo .item:nth-child(4n+2) { background: var(--item-b); }
+  .demo .item:nth-child(4n+3) { background: var(--item-c); }
+  .demo .item:nth-child(4n+4) { background: var(--item-d); }
+  
+  /* unequal height simulation via padding & fonts */
+  .demo .item:nth-child(1) { font-size: 16px; padding: 12px 14px 4px; }
+  .demo .item:nth-child(2) { font-size: 26px; padding: 4px 14px 22px; }
+  .demo .item:nth-child(3) { font-size: 14px; padding: 22px 14px 10px; }
+
+  .mega-panel { padding: 18px; display: flex; flex-direction: column; gap: 14px; background: var(--surface); }
+  .pg-group label { font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); display:block; margin-bottom: 6px; }
+  .pg-btns { display:grid; grid-template-columns:1fr; gap:5px; }
+  .pg-btns.two { grid-template-columns: 1fr 1fr; }
+  .pg-btns button { font-family:"IBM Plex Mono",monospace; font-size:11.5px; padding:8px 4px; border:1px solid var(--border); background:var(--surface-2); color:var(--text-soft); border-radius:6px; cursor:pointer; transition:all .15s ease; text-align:left; padding-left:10px; }
+  .pg-btns button:hover { border-color:var(--primary); color:var(--text); }
+  .pg-btns button.active { background:var(--primary); color:#fff; border-color:var(--primary); box-shadow:0 2px 8px color-mix(in srgb, var(--primary) 40%, transparent); }
+  .pg-code { background:var(--code-bg); border:1px solid var(--border); border-radius:8px; padding:12px; font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--code-text); line-height:1.75; overflow-x:auto; }
+
+  section.block { padding: 56px 0; border-top: 1px solid var(--border); }
+  section.block:first-of-type { border-top: none; }
+  .section-num { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--primary); margin-bottom:8px; letter-spacing:1px; }
+  h2 { font-family:"Mitr",sans-serif; font-size:clamp(26px,4.5vw,36px); font-weight:600; margin:0 0 18px; line-height:1.2; letter-spacing:-.3px; }
+  h2 .accent { color:var(--primary); }
+  h3 { font-family:"Mitr",sans-serif; font-size:20px; font-weight:600; margin:0 0 14px; }
+  p.lead { font-size:18px; color:var(--text-soft); line-height:1.75; margin:0 0 18px; }
+  p.lead b, p b { color:var(--text); font-weight:600; }
+
+  /* VALUE CARDS */
+  .values-grid { display:grid; grid-template-columns:1fr; gap:12px; margin:24px 0; }
+  @media (min-width: 600px) { .values-grid { grid-template-columns:1fr 1fr; } }
+  @media (min-width: 820px) { .values-grid { grid-template-columns:1fr 1fr 1fr; } }
+  .value-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px; box-shadow:var(--shadow); cursor:pointer; transition:all .2s ease; position: relative; }
+  .value-card:hover { border-color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+  .value-card.selected { border-color:var(--primary); background:linear-gradient(180deg,var(--primary-soft),var(--surface)); }
+  .value-card .vc-name { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--primary); font-weight:600; margin-bottom:10px; }
+  .value-card .vc-demo { background: linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 14px 14px, linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 14px 14px, var(--demo-bg); border-radius:6px; padding:10px; height:80px; margin-bottom:8px; display:flex; align-items: stretch; }
+  [data-theme="dark"] .value-card .vc-demo { background: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 14px 14px, linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 14px 14px, var(--demo-bg); }
+  .vc-mini { display:flex; gap:4px; width:100%; }
+  .vc-mini i { flex:0 0 auto; min-width:22px; background:var(--item-a); color:#fff; border-radius:4px; font-family:"IBM Plex Mono",monospace; font-style:normal; font-size:10px; font-weight:600; display:flex; align-items:center; justify-content:center; }
+  .vc-mini i:nth-child(2) { background:var(--item-b); }
+  .vc-mini i:nth-child(3) { background:var(--item-c); }
+  .value-card .vc-desc { font-size:13px; color:var(--text-soft); margin:0; line-height:1.5; }
+
+  /* BASELINE COMPARISON Visual Aids */
+  .baseline-compare { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; margin:24px 0; box-shadow:var(--shadow); }
+  .base-row { margin-bottom: 22px; }
+  .base-row:last-child { margin-bottom: 0; }
+  .base-row .br-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:8px; }
+  .base-row .br-name { font-family:"IBM Plex Mono",monospace; font-size:14px; color:var(--primary); font-weight:600; }
+  .base-row .br-tag { font-size:12px; color:var(--text-soft); }
+  .base-stage { background: linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 16px 16px, var(--demo-bg); border:1px solid var(--border); border-radius:8px; padding:14px; position:relative; min-height:100px; display:flex; align-items:center; }
+  [data-theme="dark"] .base-stage { background: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 16px 16px, var(--demo-bg); }
+  .base-stage .demo { height:110px; border:none; background:transparent; padding:0; align-items:center; }
+  .base-stage .demo.baseline { align-items:baseline; }
+  .base-stage .demo.center { align-items:center; }
+  .base-stage .demo .item { min-height:auto; min-width:60px; }
+  
+  .baseline-indicator {
+    position: absolute; left: 0; right: 0;
+    border-top: 2px dotted var(--accent);
+    opacity: 0.6; z-index: 10;
+    pointer-events: none;
+    display: none;
+  }
+  .base-stage.show-line .baseline-indicator { display: block; }
+
+  /* GAME */
+  .game { background: linear-gradient(135deg, var(--accent-soft), var(--surface)); border:1px solid var(--border); border-radius:16px; padding:24px; margin:24px 0; box-shadow:var(--shadow); }
+  .game-head { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; }
+  .game-head h3 { margin:0; }
+  .game-score { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--text-soft); background:var(--surface); padding:6px 12px; border-radius:999px; border:1px solid var(--border); }
+  .game-score b { color:var(--ok); }
+  .game-prompt { font-size:15px; color:var(--text-soft); margin:0 0 14px; }
+  .game-target-wrap { display:grid; grid-template-columns:1fr; gap:14px; }
+  @media (min-width: 680px) { .game-target-wrap { grid-template-columns:1fr 1fr; } }
+  .game-box-label { font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+  .game-stage { background: linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px, linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px, var(--demo-bg); border:1px solid var(--border); border-radius:10px; padding:14px; height:140px; display:flex; }
+  [data-theme="dark"] .game-stage { background: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px, linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px, var(--demo-bg); }
+  .game-stage .demo { height:100%; background:transparent; border:none; padding:6px; }
+  .game-choices { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+  @media (min-width: 600px) { .game-choices { grid-template-columns: repeat(5, 1fr); } }
+  .game-choices button { font-family:"IBM Plex Mono",monospace; font-size:12px; padding:11px 4px; border:2px solid var(--border); background:var(--surface); color:var(--text-soft); border-radius:8px; cursor:pointer; transition:all .15s; }
+  .game-choices button:hover:not(:disabled) { border-color:var(--primary); color:var(--text); }
+  .game-choices button.correct { background:var(--ok); color:#fff; border-color:var(--ok); }
+  .game-choices button.wrong { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .game-choices button:disabled { cursor:not-allowed; opacity:.7; }
+  .game-feedback { margin-top:14px; padding:12px 14px; border-radius:8px; font-size:14px; display:none; }
+  .game-feedback.show { display:block; }
+  .game-feedback.win { background:var(--ok-soft); color:var(--ok); border-left:3px solid var(--ok); }
+  .game-feedback.lose { background:var(--primary-soft); color:var(--primary); border-left:3px solid var(--primary); }
+  .game-next { margin-top:12px; font-family:"IBM Plex Mono",monospace; font-size:13px; background:var(--primary); color:#fff; border:none; padding:9px 16px; border-radius:8px; cursor:pointer; display:none; }
+  .game-next.show { display:inline-block; }
+
+  /* SCENARIOS */
+  .scenarios { display:grid; grid-template-columns:1fr; gap:12px; margin:24px 0; }
+  @media (min-width: 680px) { .scenarios { grid-template-columns: repeat(3, 1fr); } }
+  .scn-btn { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:14px 10px; cursor:pointer; transition:all .2s ease; text-align:center; font-family:inherit; }
+  .scn-btn:hover { border-color:var(--primary); transform:translateY(-2px); }
+  .scn-btn.active { background:linear-gradient(180deg,var(--primary-soft),var(--surface)); border-color:var(--primary); }
+  .scn-btn .ic { font-size:24px; display:block; margin-bottom:6px; }
+  .scn-btn .nm { font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--text-soft); }
+  .scn-btn.active .nm { color:var(--primary); font-weight:600; }
+  .scn-detail { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; margin-top:14px; box-shadow:var(--shadow); }
+  .scn-detail .scn-head { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .scn-detail .scn-head .ic { font-size:28px; }
+  .scn-detail .scn-head h4 { margin:0; font-family:"Mitr",sans-serif; font-size:18px; }
+  .scn-detail .scn-head .val { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--primary); background:var(--primary-soft); padding:3px 9px; border-radius:5px; margin-left:auto; }
+  .scn-detail p { margin:0 0 14px; font-size:15px; color:var(--text-soft); }
+  .scn-detail .scn-stage { background: linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px, linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px, var(--demo-bg); border:1px solid var(--border); border-radius:10px; padding:16px; min-height:100px; display:flex; align-items:center; }
+  [data-theme="dark"] .scn-detail .scn-stage { background: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px, linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px, var(--demo-bg); }
+  .scn-stage .demo { max-width:none; height:auto; background:transparent; border:none; padding:8px; }
+
+  .pitfalls { margin:24px 0; display:flex; flex-direction:column; gap:14px; }
+  .pitfall { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--warn); border-radius:10px; padding:16px 18px; box-shadow:var(--shadow); }
+  .pitfall h4 { margin:0 0 6px; font-family:"Mitr",sans-serif; font-size:16px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .pitfall h4 .ic { color:var(--warn); }
+  .pitfall p { margin:0; font-size:15px; color:var(--text-soft); line-height:1.65; }
+
+  .cheatsheet { background:linear-gradient(135deg,var(--primary-soft),var(--surface)); border:1px solid var(--border); border-radius:16px; padding:28px; margin:24px 0; box-shadow:var(--shadow); }
+  .cheatsheet h3 { margin-top:0; }
+  .cheat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 18px 0 24px; }
+  .cheat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: all .2s ease; cursor: pointer; display: flex; flex-direction: column; }
+  .cheat-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .cheat-card .cc-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+  .cheat-card .cc-val { font-family: "IBM Plex Mono", monospace; color: var(--primary); font-size: 15px; font-weight: 600; }
+  .cheat-card .cc-tag { font-size: 11px; color: var(--text-soft); background: var(--surface-2); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); white-space: nowrap; }
+  .cheat-card .cc-demo {
+    background: linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 12px 12px, linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 12px 12px, var(--demo-bg);
+    border-radius: 6px; height: 50px; display: flex; gap: 4px; padding: 6px; margin-bottom: 12px;
+  }
+  [data-theme="dark"] .cheat-card .cc-demo { background: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 12px 12px, linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 12px 12px, var(--demo-bg); }
+  .cheat-card .cc-demo .cci { flex: 0 0 16px; height: 16px; background: var(--item-a); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: "IBM Plex Mono", monospace; font-size: 9px; color: #fff; font-weight: bold; }
+  .cheat-card .cc-demo .cci:nth-child(2) { background: var(--item-b); }
+  .cheat-card .cc-demo .cci:nth-child(3) { background: var(--item-c); }
+  .cheat-card .cc-desc { font-size: 13px; color: var(--text-soft); line-height: 1.5; margin: 0; flex: 1; }
+  .cheat-card .cc-use { font-size: 11px; color: var(--muted); margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+
+  .callout { background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:8px; padding:16px 18px; margin:24px 0; font-size:15px; color:var(--text); line-height:1.7; }
+  .callout b { color:var(--accent); }
+
+  footer.site { border-top:1px solid var(--border); padding:40px 0 60px; margin-top:40px; text-align:center; }
+  footer.site .prev-next { display:grid; grid-template-columns:1fr; gap:14px; max-width:760px; margin:0 auto 30px; }
+  @media (min-width: 680px) { footer.site .prev-next { grid-template-columns:1fr 1fr; } }
+  footer.site .nx { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:var(--shadow); text-decoration:none; color:inherit; transition:all .2s; display:block; text-align:left; }
+  footer.site .nx:hover { border-color:var(--primary); transform:translateY(-2px); }
+  footer.site .nx-label { font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:8px; }
+  footer.site .nx-name { font-family:"Mitr",sans-serif; font-size:20px; font-weight:600; margin-bottom:6px; }
+  footer.site .nx-name .p { color:var(--primary); font-family:"IBM Plex Mono",monospace; font-size:16px; }
+  footer.site .nx-desc { font-size:13px; color:var(--text-soft); margin:0; }
+  footer.site .nx.next { text-align:right; }
+  footer.site .credit { font-size:13px; color:var(--muted); }
+  footer.site .credit a { color:var(--accent); text-decoration:none; }
+  .progress-line { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--primary),var(--accent)); width:0%; z-index:100; transition:width .1s linear; }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--text); color:var(--bg); padding:10px 18px; border-radius:999px; font-family:"IBM Plex Mono",monospace; font-size:13px; box-shadow:var(--shadow-lg); z-index:200; opacity:0; pointer-events:none; transition:all .3s cubic-bezier(.4,0,.2,1); }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+  .playground-baseline {
+    position: absolute; left: 0; right: 0;
+    border-top: 2px dotted var(--accent);
+    opacity: 0.8; z-index: 10;
+    pointer-events: none;
+    display: none;
+  }
+
+  /* ============ SIDEBAR ============ */
+  .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 150; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+  .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+  .sidebar { position: fixed; top: 0; left: -260px; width: 260px; height: 100vh; background: var(--surface); border-right: 1px solid var(--border); z-index: 160; transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: var(--shadow-lg); }
+  .sidebar.show { transform: translateX(260px); }
+  .sidebar-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+  .sidebar-header .brand { font-size: 15px; font-weight: 600; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .sidebar-close { background: none; border: none; color: var(--text-soft); font-size: 24px; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; transition: color .2s; }
+  .sidebar-close:hover { color: var(--primary); }
+  .sidebar-nav { padding: 20px 12px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; }
+  .sidebar-nav .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; color: var(--text-soft); text-decoration: none; border-left: 3px solid transparent; border-radius: 0 8px 8px 0; margin-right: 8px; font-size: 14.5px; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .sidebar-nav .nav-item:hover { background: var(--surface-2); color: var(--text); padding-left: 18px; border-left-color: var(--border-strong); }
+  .sidebar-nav .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; border-left-color: var(--primary); }
+  .sidebar-nav .nav-item.active:hover { padding-left: 14px; }
+  .sidebar-nav .nav-item .n { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--muted); }
+  .sidebar-nav .nav-item.active .n { color: var(--primary); }
+  .sidebar-nav .nav-section-title { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin: 14px 0 6px 14px; }
+  .brand-logo-icon { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--primary); color:#fff; border-radius:7px; font-size:14px; }
+  @media (min-width: 1200px) {
+    body { padding-left: 260px; transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    body.sidebar-collapsed { padding-left: 72px; }
+    .sidebar { left: 0; transform: none; box-shadow: none; z-index: 170; width: 260px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
+    body.sidebar-collapsed .sidebar { width: 72px; }
+    body.sidebar-collapsed .sidebar:hover { width: 260px; box-shadow: var(--shadow-lg); }
+    .sidebar-overlay, .sidebar-close { display: none !important; }
+    nav.topbar .brand-mark { cursor: pointer; }
+    
+    /* Fix inner width so content doesn't wrap/squish during transition */
+    .sidebar-header, .sidebar-nav { width: 260px; }
+    
+    /* Collapsed sidebar state adjustments */
+    body.sidebar-collapsed .sidebar .brand-txt,
+    body.sidebar-collapsed .sidebar .nav-item .t,
+    body.sidebar-collapsed .sidebar .nav-section-title {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0s 0.2s;
+    }
+    body.sidebar-collapsed .sidebar .nav-item {
+      padding-left: 25px; /* Shift icon to center of 72px */
+    }
+    body.sidebar-collapsed .sidebar .sidebar-header {
+      padding-left: 22px; /* Shift logo to center of 72px */
+    }
+    
+    /* Hovered Collapsed sidebar state */
+    body.sidebar-collapsed .sidebar:hover .brand-txt,
+    body.sidebar-collapsed .sidebar:hover .nav-item .t,
+    body.sidebar-collapsed .sidebar:hover .nav-section-title {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease 0.1s, visibility 0s 0s;
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item {
+      padding-left: 14px; /* Return to original padding */
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item:hover {
+      padding-left: 18px;
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item.active {
+      padding-left: 14px;
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item.active:hover {
+      padding-left: 14px;
+    }
+    body.sidebar-collapsed .sidebar:hover .sidebar-header {
+      padding-left: 18px; /* Return to original padding */
+    }
+    
+    /* Collapsible brand text on desktop topbar */
+    nav.topbar .brand-txt, nav.topbar .sep { display: none; }
+    body.sidebar-collapsed nav.topbar .brand-txt, body.sidebar-collapsed nav.topbar .sep { display: inline; }
+  }
+</style>
+</head>
+<body>
+<div class="progress-line" id="progress"></div>
+
+<!-- SIDEBAR MENU -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a class="brand" href="index.html">
+      <span class="brand-logo-icon">🧪</span>
+      <span class="brand-txt">CSS Flexbox Lab</span>
+    </a>
+    <button class="sidebar-close" id="sidebarClose" aria-label="ปิดเมนู">&times;</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item home-item"><span class="n">🏠</span> <span class="t">หน้าแรก</span></a>
+    <div class="nav-section-title">Properties</div>
+    <a href="display.html" class="nav-item display-item"><span class="n">01</span> <span class="t">display</span></a>
+    <a href="flex-direction.html" class="nav-item direction-item"><span class="n">02</span> <span class="t">flex-direction</span></a>
+    <a href="flex-wrap.html" class="nav-item wrap-item"><span class="n">03</span> <span class="t">flex-wrap</span></a>
+    <a href="flex-flow.html" class="nav-item flow-item"><span class="n">04</span> <span class="t">flex-flow</span></a>
+    <a href="justify-content.html" class="nav-item justify-item"><span class="n">05</span> <span class="t">justify-content</span></a>
+    <a href="align-items.html" class="nav-item align-item active"><span class="n">06</span> <span class="t">align-items</span></a>
+  </nav>
+</aside>
+
+<nav class="topbar">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">≡</span>
+    <span class="brand-txt">CSS Flexbox Lab</span>
+    <span class="sep">/</span>
+    <span class="prop-name">align-items</span>
+  </a>
+  <div>
+    <button class="theme-toggle" id="themeBtn">
+      <span id="themeIcon">☀️</span>
+      <span id="themeLabel">Dark</span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow"><span class="dot"></span>CSS FLEXBOX · PROPERTY LAB #6</div>
+    <h1 class="title"><span class="brace">{</span> <span class="name">align-items</span> <span class="brace">}</span></h1>
+    <p class="lede">
+      ตัวจัดวาง items ตาม <b>แกนฉาก</b> (cross-axis) —
+      จะให้ยืดตึง ชิดบน ชิดล่าง หรือจัดกลางแนวดิ่ง เล่นได้ 5 ค่า พร้อมเกมและวิธีใช้จริง
+    </p>
+    <div class="hero-meta">
+      <span>🎯 <b>5 ค่า</b></span>
+      <span>📐 <b>cross-axis</b> (แนวตั้งฉาก)</span>
+      <span>🎮 <b>Interactive</b> ลองปรับได้ทันที</span>
+    </div>
+  </header>
+
+  <!-- MEGA PLAYGROUND -->
+  <div class="mega">
+    <div class="mega-header">
+      <div class="mega-title"><div class="mega-dots"><span></span><span></span><span></span></div> playground.html</div>
+      <div class="mega-title" style="color:var(--text-soft)">เปลี่ยนค่า + สลับทิศ ⤵</div>
+    </div>
+    <div class="mega-body">
+      <div class="mega-stage">
+        <div class="demo" id="megaDemo">
+          <div class="item">1<span class="baseline-marker" style="display:inline-block; width:0; height:0; vertical-align:baseline;"></span></div>
+          <div class="item">2</div>
+          <div class="item">3</div>
+          <div class="playground-baseline" id="playgroundBaseline"></div>
+        </div>
+      </div>
+      <div class="mega-panel">
+        <div class="pg-group">
+          <label>align-items</label>
+          <div class="pg-btns" data-prop="align">
+            <button data-value="stretch" class="active">stretch (ค่าเริ่มต้น)</button>
+            <button data-value="flex-start">flex-start (start)</button>
+            <button data-value="center">center (กลาง)</button>
+            <button data-value="flex-end">flex-end (end)</button>
+            <button data-value="baseline">baseline (แนวตัวหนังสือ)</button>
+          </div>
+        </div>
+        <div class="pg-group">
+          <label>flex-direction <span style="color:var(--accent)">(สลับแกนฉาก)</span></label>
+          <div class="pg-btns two" data-prop="dir">
+            <button data-value="row" class="active">row</button>
+            <button data-value="column">column</button>
+          </div>
+        </div>
+        <div class="pg-code" id="megaCode"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 01: 5 values -->
+  <section class="block">
+    <div class="section-num">01 ·</div>
+    <h2>ค่าทั้ง <span class="accent">5 ค่า</span></h2>
+    <p class="lead">
+      ต่างจากแกนหลัก แกนฉาก (cross-axis) จะทำหน้าที่<b>ยืดหรือกระจายในแนวตัด</b> โดยมีค่าให้ใช้ดังนี้:
+    </p>
+
+    <div class="values-grid" id="valueCards">
+      <div class="value-card selected" data-value="stretch">
+        <div class="vc-name">stretch</div>
+        <div class="vc-demo">
+          <div class="vc-mini" style="align-items:stretch">
+            <i style="padding-top:4px">1</i><i style="padding-top:10px">2</i><i style="padding-top:2px">3</i>
+          </div>
+        </div>
+        <p class="vc-desc"><b>ค่าเริ่มต้น</b> — items จะยืดจนสุดความสูง/ความกว้างแกนฉาก (ถ้าไม่ได้ล็อคขนาดไว้)</p>
+      </div>
+      <div class="value-card" data-value="flex-start">
+        <div class="vc-name">flex-start</div>
+        <div class="vc-demo">
+          <div class="vc-mini" style="align-items:flex-start">
+            <i style="height:35px">1</i><i style="height:55px">2</i><i style="height:45px">3</i>
+          </div>
+        </div>
+        <p class="vc-desc">จัดเรียง items ให้<b>ชิดจุดเริ่มต้น</b>ของแกนฉาก (เช่น ขอบบน เมื่อเป็นแถวแนวนอน)</p>
+      </div>
+      <div class="value-card" data-value="center">
+        <div class="vc-name">center</div>
+        <div class="vc-demo">
+          <div class="vc-mini" style="align-items:center">
+            <i style="height:35px">1</i><i style="height:55px">2</i><i style="height:45px">3</i>
+          </div>
+        </div>
+        <p class="vc-desc">จัดเรียง items ให้อยู่<b>ตรงกลางแกนฉาก</b>พอดี (แนวจัดกึ่งกลางแนวดิ่งยอดฮิต)</p>
+      </div>
+      <div class="value-card" data-value="flex-end">
+        <div class="vc-name">flex-end</div>
+        <div class="vc-demo">
+          <div class="vc-mini" style="align-items:flex-end">
+            <i style="height:35px">1</i><i style="height:55px">2</i><i style="height:45px">3</i>
+          </div>
+        </div>
+        <p class="vc-desc">จัดเรียง items ให้<b>ชิดจุดสิ้นสุด</b>ของแกนฉาก (เช่น ชิดขอบล่าง)</p>
+      </div>
+      <div class="value-card" data-value="baseline">
+        <div class="vc-name">baseline</div>
+        <div class="vc-demo">
+          <div class="vc-mini" style="align-items:baseline">
+            <i style="padding-top:6px;font-size:10px">1</i><i style="padding-top:2px;font-size:18px">2</i><i style="padding-top:14px;font-size:11px">3</i>
+          </div>
+        </div>
+        <p class="vc-desc">จัดเรียงโดยใช้<b>แนวฐานของตัวหนังสือ</b> (baseline) ข้างในให้ตรงกันทั้งหมด</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02: center vs baseline -->
+  <section class="block">
+    <div class="section-num">02 ·</div>
+    <h2>center vs baseline — <span class="accent">เปรียบเทียบความต่าง</span></h2>
+    <p class="lead">
+      มือใหม่มักสับสนสองตัวนี้ เพราะมันดู "กึ่งกลาง" คล้ายกัน — สังเกต<b>เส้นประสีน้ำเงิน</b>ที่ระบุแนวอักษร
+    </p>
+
+    <div class="baseline-compare">
+      <div class="base-row">
+        <div class="br-head">
+          <span class="br-name">align-items: center</span>
+          <span class="br-tag">ยึด <b>จุดกึ่งกลางของกล่อง</b> เป็นหลัก</span>
+        </div>
+        <div class="base-stage show-line">
+          <div class="baseline-indicator" style="top:55px"></div>
+          <div class="demo center">
+            <div class="item" style="font-size: 16px; padding: 14px 10px 4px;">A</div>
+            <div class="item" style="font-size: 28px; padding: 4px 10px 22px;">B</div>
+            <div class="item" style="font-size: 14px; padding: 22px 10px 10px;">C</div>
+          </div>
+        </div>
+        <p style="margin:6px 0 0;font-size:13px;color:var(--text-soft)">✓ กล่องอยู่กลางเท่ากัน แต่<b>ตัวหนังสือด้านในจะขึ้น ๆ ลง ๆ</b> ตามขนาดกล่องและ padding</p>
+      </div>
+
+      <div class="base-row">
+        <div class="br-head">
+          <span class="br-name">align-items: baseline</span>
+          <span class="br-tag">ยึด <b>แนวฐานของตัวอักษร</b> ให้ตรงกัน</span>
+        </div>
+        <div class="base-stage show-line">
+          <div class="baseline-indicator" style="top:66px"></div>
+          <div class="demo baseline">
+            <div class="item" style="font-size: 16px; padding: 14px 10px 4px;">A</div>
+            <div class="item" style="font-size: 28px; padding: 4px 10px 22px;">B</div>
+            <div class="item" style="font-size: 14px; padding: 22px 10px 10px;">C</div>
+          </div>
+        </div>
+        <p style="margin:6px 0 0;font-size:13px;color:var(--text-soft)">✓ ตัวหนังสือเรียงระนาบเดียวกันเป๊ะ เหมาะกับการจัดวางราคาหน่วยต่างกัน หรือปุ่มไอคอนคู่ตัวอักษร</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03: GAME -->
+  <section class="block">
+    <div class="section-num">03 · 🎮</div>
+    <h2>เกมทายค่า — <span class="accent">Guess the Cross-Axis</span></h2>
+    <p class="lead">สังเกต "เป้าหมาย" (กล่องมีขนาดต่างกัน) แล้วทายว่าใช้ <code>align-items</code> ค่าใด</p>
+
+    <div class="game">
+      <div class="game-head">
+        <h3 style="margin:0">🎯 รอบที่ <span id="roundNum">1</span></h3>
+        <div class="game-score">คะแนน: <b id="scoreNum">0</b>/<span id="totalNum">0</span></div>
+      </div>
+      <p class="game-prompt">เป้าหมายด้านซ้าย — ทายว่ามันกำลังใช้จัดแกนแบบใด</p>
+
+      <div class="game-target-wrap">
+        <div>
+          <div class="game-box-label">🎯 เป้าหมาย</div>
+          <div class="game-stage"><div class="demo" id="gameTarget"></div></div>
+        </div>
+        <div>
+          <div class="game-box-label">✅ คำตอบของคุณ</div>
+          <div class="game-stage"><div class="demo" id="gameUser"></div></div>
+        </div>
+      </div>
+
+      <div class="game-choices" id="gameChoices">
+        <button data-value="stretch">stretch</button>
+        <button data-value="flex-start">flex-start</button>
+        <button data-value="center">center</button>
+        <button data-value="flex-end">flex-end</button>
+        <button data-value="baseline">baseline</button>
+      </div>
+
+      <div class="game-feedback" id="gameFeedback"></div>
+      <button class="game-next" id="gameNext">ถัดไป →</button>
+    </div>
+  </section>
+
+  <!-- SECTION 04: SCENARIOS -->
+  <section class="block">
+    <div class="section-num">04 ·</div>
+    <h2>ใช้ตอนไหน? — <span class="accent">3 สถานการณ์ยอดฮิต</span></h2>
+
+    <div class="scenarios" id="scenarios">
+      <button class="scn-btn active" data-scn="navbar"><span class="ic">🧭</span><span class="nm">navbar middle</span></button>
+      <button class="scn-btn" data-scn="equalheight"><span class="ic">🃏</span><span class="nm">equal cards</span></button>
+      <button class="scn-btn" data-scn="pricetag"><span class="ic">🏷️</span><span class="nm">price baseline</span></button>
+    </div>
+
+    <div class="scn-detail" id="scnDetail"></div>
+  </section>
+
+  <!-- SECTION 05: AXIS FLIPS -->
+  <section class="block">
+    <div class="section-num">05 ·</div>
+    <h2>เมื่อทิศทางสลับ แกนฉากก็เปลี่ยน! 🔄</h2>
+    <p class="lead">
+      จำไว้เสมอว่า <code>align-items</code> ทำงานบน <b>แกนฉาก (cross-axis)</b>:
+    </p>
+    <ul>
+      <li>เมื่อ <code>flex-direction: row</code> (แนวนอน) — แกนฉากคือ <b>แนวตั้ง</b> (จัด กึ่งกลางบน-ล่าง)</li>
+      <li>เมื่อ <code>flex-direction: column</code> (แนวตั้ง) — แกนฉากคือ <b>แนวนอน</b> (จัด ซ้าย-ขวา แทน)</li>
+    </ul>
+
+    <div class="callout">
+      💡 <b>เคล็ดลับการจำ:</b> ในทิศทาง column ค่า <code>stretch</code> จะหมายถึง "ขยายเต็มความกว้างหน้าจอ" 
+      ส่วน <code>center</code> จะหมายถึง "การจัดกึ่งกลางหน้าจอแนวนอน"
+    </div>
+  </section>
+
+  <!-- SECTION 06: PITFALLS -->
+  <section class="block">
+    <div class="section-num">06 ·</div>
+    <h2>จุดที่คน <span class="accent">พลาดบ่อย</span> ⚠️</h2>
+
+    <div class="pitfalls">
+      <div class="pitfall">
+        <h4><span class="ic">①</span> ใช้ center แล้วไม่ขยับ เพราะ container ไม่มี height</h4>
+        <p>สำหรับแนวนอน ถ้าตัว container มีความสูงเท่ากับ items พอดี (<code>height: auto</code>) 
+        จะจัด center หรือ flex-end ไปก็ไม่เห็นการขยับ เพราะไม่มีพื้นที่แนวตั้งให้วิ่ง — ต้องตั้งความสูง container ก่อน</p>
+      </div>
+      <div class="pitfall">
+        <h4><span class="ic">②</span> ใช้ stretch แต่ดันไปล็อคความสูง (height) ของ items ไว้</h4>
+        <p>หากคุณกำหนด <code>height: 60px</code> ให้กับ items ตัว CSS จะยอมรับค่านั้นและยกเลิกการ <code>stretch</code> ไปโดยปริยาย 
+        ถ้าอยากให้ยืดเต็มความสูง ห้ามล็อคความสูงของ items</p>
+      </div>
+      <div class="pitfall">
+        <h4><span class="ic">③</span> สับสนระหว่าง <code>align-items</code> กับ <code>align-content</code></h4>
+        <p><code>align-items</code> จัดการของในบรรทัดเดียว ส่วน <code>align-content</code> จะใช้ก็ต่อเมื่อมีหลายบรรทัด (เมื่อมีการใช้ <code>flex-wrap: wrap</code>)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 07: CHEATSHEET -->
+  <section class="block">
+    <div class="section-num">07 ·</div>
+    <h2>Cheatsheet <span class="accent">30 วินาที</span> 📋</h2>
+
+    <div class="cheatsheet">
+      <h3 style="margin-top:0">สรุปการทำงานของ <code style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:16px">align-items</code></h3>
+      <div class="cheat-grid">
+        <div class="cheat-card" data-val="stretch">
+          <div class="cc-head"><span class="cc-val">stretch</span><span class="cc-tag">ยืดตึงบน-ล่าง</span></div>
+          <div class="cc-demo" style="align-items:stretch"><div class="cci" style="height:auto"></div><div class="cci" style="height:auto"></div><div class="cci" style="height:auto"></div></div>
+          <p class="cc-desc">ยืดตาม container (ค่าเริ่มต้น)</p>
+          <div class="cc-use">การ์ดคอนเทนต์ไม่เท่ากัน</div>
+        </div>
+        <div class="cheat-card" data-val="flex-start">
+          <div class="cc-head"><span class="cc-val">flex-start</span><span class="cc-tag">ชิดบน</span></div>
+          <div class="cc-demo" style="align-items:flex-start"><div class="cci"></div><div class="cci" style="height:24px"></div><div class="cci"></div></div>
+          <p class="cc-desc">ดัน items ไปชิดฝั่งเริ่มต้นขวาง</p>
+          <div class="cc-use">วางรูปภาพคู่คำอธิบาย</div>
+        </div>
+        <div class="cheat-card" data-val="center">
+          <div class="cc-head"><span class="cc-val">center</span><span class="cc-tag">กลางแนวดิ่ง</span></div>
+          <div class="cc-demo" style="align-items:center"><div class="cci"></div><div class="cci" style="height:24px"></div><div class="cci"></div></div>
+          <p class="cc-desc">จัดให้อยู่กึ่งกลางขวาง</p>
+          <div class="cc-use">navbar logo · ปุ่มไอคอน</div>
+        </div>
+        <div class="cheat-card" data-val="flex-end">
+          <div class="cc-head"><span class="cc-val">flex-end</span><span class="cc-tag">ชิดล่าง</span></div>
+          <div class="cc-demo" style="align-items:flex-end"><div class="cci"></div><div class="cci" style="height:24px"></div><div class="cci"></div></div>
+          <p class="cc-desc">ดัน items ไปชิดฝั่งปลายขวาง</p>
+          <div class="cc-use">ฟอร์มแชทส่งข้อความ</div>
+        </div>
+        <div class="cheat-card" data-val="baseline">
+          <div class="cc-head"><span class="cc-val">baseline</span><span class="cc-tag">ยึดแนวฐานอักษร</span></div>
+          <div class="cc-demo" style="align-items:baseline;padding-top:12px"><div class="cci" style="font-size:16px;flex:1;background:transparent;color:var(--text);font-family:sans-serif">Ag</div><div class="cci" style="font-size:10px;flex:1;background:transparent;color:var(--text);font-family:sans-serif">ag</div></div>
+          <p class="cc-desc">เรียงตามฐานอักษรล่างสุดของคำแรก</p>
+          <div class="cc-use">ตัวเลขราคาพร้อมหน่วยต่างขนาด</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="prev-next">
+      <a class="nx" href="justify-content.html">
+        <div class="nx-label">← ก่อนหน้า</div>
+        <div class="nx-name"><span class="p">justify-content</span></div>
+        <p class="nx-desc">จัดวางกล่องตามแกนหลัก (main-axis)</p>
+      </a>
+      <a class="nx next" href="index.html">
+        <div class="nx-label">เรียนรู้จบแล้ว! 🎉</div>
+        <div class="nx-name">กลับหน้าแรก</div>
+        <p class="nx-desc">กลับสู่สารบัญหลักเพื่อทบทวนบทเรียนทั้งหมด</p>
+      </a>
+    </div>
+    <p class="credit">CSS Flexbox Lab · อ้างอิง <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/align-items" target="_blank" rel="noopener">MDN</a> · ทำด้วย ❤️</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function hl(p,v){const vs=v.split(' ').map(x=>`<span class="v">${x}</span>`).join(' ');return `<span class="k">${p}</span><span class="s">:</span> ${vs}<span class="s">;</span>`;}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);}
+
+const state={align:'stretch',dir:'row'};
+const megaDemo=document.getElementById('megaDemo');
+const megaCode=document.getElementById('megaCode');
+
+function render(){
+  megaDemo.style.alignItems=state.align;
+  megaDemo.style.flexDirection=state.dir;
+  
+  // Custom height logic for stretch playground demo
+  const items = megaDemo.querySelectorAll('.item');
+  if (state.align === 'stretch' && state.dir === 'row') {
+    items.forEach(it => { it.style.height = 'auto'; });
+  } else {
+    items.forEach(it => { it.style.height = ''; });
+  }
+
+  // Visual alignment line guide (resets dynamically based on axis)
+  const blLine = document.getElementById('playgroundBaseline');
+  blLine.style.display = 'none';
+  blLine.style.top = '';
+  blLine.style.bottom = '';
+  blLine.style.left = '';
+  blLine.style.right = '';
+  blLine.style.width = '';
+  blLine.style.height = '';
+  blLine.style.borderTop = '';
+  blLine.style.borderLeft = '';
+
+  if (state.dir === 'row') {
+    blLine.style.left = '0';
+    blLine.style.right = '0';
+    blLine.style.width = 'auto';
+    blLine.style.height = '0';
+    blLine.style.borderTop = '2px dashed var(--accent)';
+    const demoRect = megaDemo.getBoundingClientRect();
+
+    if (state.align === 'baseline') {
+      const marker = megaDemo.querySelector('.baseline-marker');
+      if (marker) {
+        blLine.style.display = 'block';
+        const markerRect = marker.getBoundingClientRect();
+        blLine.style.top = (markerRect.top - demoRect.top) + 'px';
+        blLine.style.borderTop = '2px dotted var(--accent)';
+      }
+    } else if (state.align === 'flex-start') {
+      blLine.style.display = 'block';
+      blLine.style.top = '14px'; // padding-top of .demo
+    } else if (state.align === 'center') {
+      blLine.style.display = 'block';
+      blLine.style.top = (demoRect.height / 2) + 'px';
+    } else if (state.align === 'flex-end') {
+      blLine.style.display = 'block';
+      blLine.style.top = (demoRect.height - 14) + 'px'; // bottom padding edge of .demo
+    }
+  } else {
+    // column direction — cross-axis is horizontal. Show vertical guide line!
+    blLine.style.top = '0';
+    blLine.style.bottom = '0';
+    blLine.style.height = '100%';
+    blLine.style.width = '0';
+    blLine.style.borderLeft = '2px dashed var(--accent)';
+    const demoRect = megaDemo.getBoundingClientRect();
+
+    if (state.align === 'flex-start') {
+      blLine.style.display = 'block';
+      blLine.style.left = '14px'; // padding-left of .demo
+    } else if (state.align === 'center') {
+      blLine.style.display = 'block';
+      blLine.style.left = (demoRect.width / 2) + 'px';
+    } else if (state.align === 'flex-end') {
+      blLine.style.display = 'block';
+      blLine.style.left = (demoRect.width - 14) + 'px'; // right padding edge of .demo
+    }
+  }
+
+  megaCode.innerHTML=`<span class="c">.container {</span>\n  <span class="k">display</span><span class="s">:</span> <span class="v">flex</span><span class="s">;</span>\n  <span class="k">flex-direction</span><span class="s">:</span> <span class="v">${state.dir}</span><span class="s">;</span>\n  ${hl('align-items',state.align)}\n<span class="c">}</span>`;
+  
+  document.querySelectorAll('.pg-btns').forEach(g=>{
+    const p=g.dataset.prop;const key=p==='dir'?'dir':'align';
+    g.querySelectorAll('button').forEach(b=>b.classList.toggle('active',b.dataset.value===state[key]));
+  });
+  document.querySelectorAll('.value-card').forEach(c=>c.classList.toggle('selected',c.dataset.value===state.align));
+}
+
+document.querySelectorAll('.pg-btns').forEach(g=>{
+  g.addEventListener('click',e=>{
+    const btn=e.target.closest('button');if(!btn)return;
+    const p=g.dataset.prop;
+    if(p==='dir')state.dir=btn.dataset.value;
+    else state.align=btn.dataset.value;
+    render();
+  });
+});
+
+document.querySelectorAll('.value-card').forEach(c=>{
+  c.addEventListener('click',()=>{
+    state.align=c.dataset.value;render();
+    window.scrollTo({top:document.querySelector('.mega').offsetTop-80,behavior:'smooth'});
+    showToast('ส่งขึ้น playground ↑');
+  });
+});
+render();
+
+/* GAME LOGIC */
+const VALS=['stretch','flex-start','center','flex-end','baseline'];
+const game={round:1,score:0,total:0,target:'stretch',answered:false};
+const gameTarget=document.getElementById('gameTarget');
+const gameUser=document.getElementById('gameUser');
+const gameFeedback=document.getElementById('gameFeedback');
+const gameNext=document.getElementById('gameNext');
+const gameChoices=document.getElementById('gameChoices');
+
+function makeGameItems(c, alignVal){
+  c.innerHTML='';
+  
+  const itemsData = [
+    { text: '1', font: '16px', pad: '12px 14px 4px' },
+    { text: '2', font: '26px', pad: '4px 14px 20px' },
+    { text: '3', font: '14px', pad: '22px 14px 10px' }
+  ];
+  
+  itemsData.forEach(d => {
+    const it=document.createElement('div');
+    it.className='item';
+    it.textContent=d.text;
+    it.style.fontSize=d.font;
+    it.style.padding=d.pad;
+    if (alignVal === 'stretch') {
+      it.style.height = 'auto';
+    } else {
+      it.style.height = '';
+    }
+    c.appendChild(it);
+  });
+}
+
+function newRound(){
+  game.answered=false;
+  game.target=VALS[Math.floor(Math.random()*VALS.length)];
+  
+  makeGameItems(gameTarget, game.target);
+  makeGameItems(gameUser, 'stretch'); // Reset user view to default stretch first
+  
+  gameTarget.style.alignItems=game.target;
+  gameUser.style.alignItems='stretch';
+  
+  gameFeedback.classList.remove('show','win','lose');
+  gameNext.classList.remove('show');
+  gameChoices.querySelectorAll('button').forEach(b=>{b.disabled=false;b.classList.remove('correct','wrong');});
+  document.getElementById('roundNum').textContent=game.round;
+}
+
+gameChoices.addEventListener('click',e=>{
+  const btn=e.target.closest('button');if(!btn||game.answered)return;
+  game.answered=true;game.total++;
+  const val=btn.dataset.value;
+  
+  makeGameItems(gameUser, val);
+  gameUser.style.alignItems=val;
+  
+  gameChoices.querySelectorAll('button').forEach(b=>{b.disabled=true;if(b.dataset.value===game.target)b.classList.add('correct');});
+  if(val===game.target){game.score++;gameFeedback.textContent=`✓ ถูกต้อง! ค่าแนวระนาบคือ align-items: ${game.target}`;gameFeedback.className='game-feedback win show';}
+  else{btn.classList.add('wrong');gameFeedback.textContent=`✗ ยังไม่ถูก! ค่าเฉลยคือ align-items: ${game.target}`;gameFeedback.className='game-feedback lose show';}
+  document.getElementById('scoreNum').textContent=game.score;
+  document.getElementById('totalNum').textContent=game.total;
+  gameNext.classList.add('show');
+});
+
+gameNext.addEventListener('click',()=>{game.round++;newRound();});
+newRound();
+
+/* SCENARIOS */
+const SCN={
+  navbar:{icon:'🧭',name:'Navbar Vertical Align',value:'center',
+    desc:'จัดไอคอน โลโก้ และเมนูให้อยู่จุดกึ่งกลางแนวดิ่งเสมอ — แม้ว่าความสูงของไอคอนกับขนาดโลโก้จะไม่เท่ากัน',
+    html:'<div class="demo" style="align-items:center;height:80px;max-width:500px"><div class="item" style="font-size:24px;padding:4px 10px;">LOGO</div><div class="item" style="font-size:14px;padding:8px 10px;">Menu Item</div><div class="item" style="font-size:12px;padding:4px 8px;background:var(--accent)">Profile</div></div>'},
+  equalheight:{icon:'🃏',name:'Equal Height Cards',value:'stretch',
+    desc:'หน้าเว็บแสดง Product Cards ที่มีความยาวเนื้อหาและรูปต่างกัน แต่อยากให้ความสูงของการ์ดเท่ากันทุกใบเพื่อความสวยงาม',
+    html:'<div class="demo" style="align-items:stretch;height:120px;max-width:500px"><div class="item" style="font-size:13px;padding:8px;height:auto">การ์ดสั้น</div><div class="item" style="font-size:13px;padding:8px;height:auto">การ์ดที่เนื้อหายาวกว่า<br>มีคำอธิบายเพิ่ม</div><div class="item" style="font-size:13px;padding:8px;height:auto">การ์ดสั้นมาก</div></div>'},
+  pricetag:{icon:'🏷️',name:'Price Unit Tag',value:'baseline',
+    desc:'จัดตำแหน่งหน่วยเงินขนาดใหญ่อยู่คู่กับคำอธิบายขนาดเล็ก ให้ตัวหนังสือวางบนแนวฐานฐานเดียวกันอย่างกลมกลืน',
+    html:'<div class="demo" style="align-items:baseline;height:80px;max-width:500px"><div class="item" style="font-size:32px;padding:4px 10px;font-weight:700">฿99</div><div class="item" style="font-size:13px;padding:4px 10px;color:rgba(255,255,255,0.85)">/เดือน</div></div>'},
+};
+
+function renderScn(key){
+  const s=SCN[key];
+  document.getElementById('scnDetail').innerHTML=`<div class="scn-head"><span class="ic">${s.icon}</span><h4>${s.name}</h4><span class="val">align-items: ${s.value}</span></div><p>${s.desc}</p><div class="scn-stage">${s.html}</div>`;
+  document.querySelectorAll('.scn-btn').forEach(b=>b.classList.toggle('active',b.dataset.scn===key));
+}
+document.getElementById('scenarios').addEventListener('click',e=>{const btn=e.target.closest('.scn-btn');if(!btn)return;renderScn(btn.dataset.scn);});
+renderScn('navbar');
+
+/* THEME */
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);document.getElementById('themeIcon').textContent=t==='dark'?'🌙':'☀️';document.getElementById('themeLabel').textContent=t==='dark'?'Light':'Dark';try{localStorage.setItem('flexlab-theme',t);}catch(e){}}
+let saved='light';try{saved=localStorage.getItem('flexlab-theme')||'light';}catch(e){}
+applyTheme(saved);
+document.getElementById('themeBtn').addEventListener('click',()=>{applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');});
+
+window.addEventListener('scroll',()=>{const h=document.documentElement;document.getElementById('progress').style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight))*100+'%';},{passive:true});
+
+/* ============ SIDEBAR MENU TOGGLE ============ */
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const sidebarClose = document.getElementById('sidebarClose');
+const brandMark = document.querySelector('.brand-mark');
+
+if (brandMark) {
+  brandMark.addEventListener('click', e => {
+    e.preventDefault();
+    if (window.innerWidth >= 1200) {
+      document.body.classList.toggle('sidebar-collapsed');
+    } else {
+      sidebar.classList.add('show');
+      sidebarOverlay.classList.add('show');
+    }
+  });
+}
+if (sidebarClose) {
+  sidebarClose.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    sidebarOverlay.classList.remove('show');
+  });
+}
+if (sidebarOverlay) {
+  sidebarOverlay.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    sidebarOverlay.classList.remove('show');
+  });
+}
+
+/* ============================================================
+   CHEATSHEET INTERACTION
+   ============================================================ */
+document.querySelectorAll('.cheat-card').forEach(card => {
+  card.addEventListener('click', () => {
+    state.align = card.dataset.val;
+    render();
+    window.scrollTo({ top: document.querySelector('.mega').offsetTop - 80, behavior: 'smooth' });
+    showToast('ส่งค่าขึ้น playground ↑');
+  });
+});
+</script>
+</body>
+</html>

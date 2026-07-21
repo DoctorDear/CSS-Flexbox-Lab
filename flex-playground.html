@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>เรียนรู้ CSS Flex Container Properties · Interactive</title>
+<style>
+  :root {
+    --bg: #0f1222;
+    --bg-soft: #171a30;
+    --card: #1d2140;
+    --card-2: #232850;
+    --text: #e8ebff;
+    --muted: #a6abd6;
+    --border: #2d3160;
+    --primary: #7c5cff;
+    --primary-2: #4cc9f0;
+    --accent: #f72585;
+    --ok: #2dd4bf;
+    --warn: #fbbf24;
+    --demo-bg: #0b0e1e;
+    --demo-border: #2d3160;
+    --code-bg: #0b0e1e;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "Sarabun", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(1200px 600px at 10% -10%, #252a5e 0%, transparent 60%),
+                radial-gradient(1000px 500px at 110% 10%, #3a1a55 0%, transparent 55%),
+                var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 20px 80px;
+  }
+
+  /* ---------- HERO ---------- */
+  header.hero {
+    text-align: center;
+    padding: 30px 10px 10px;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--primary-2);
+    background: rgba(76, 201, 240, 0.1);
+    border: 1px solid rgba(76, 201, 240, 0.3);
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: clamp(28px, 5vw, 46px);
+    margin: 0 0 10px;
+    background: linear-gradient(90deg, #fff, #b8c0ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.15;
+  }
+  .sub {
+    color: var(--muted);
+    max-width: 680px;
+    margin: 0 auto;
+    font-size: 16px;
+  }
+
+  /* ---------- QUICK NAV ---------- */
+  nav.toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 26px 0 10px;
+  }
+  nav.toc a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 7px 12px;
+    border-radius: 8px;
+    transition: all .2s ease;
+    font-family: ui-monospace, "Cascadia Code", monospace;
+  }
+  nav.toc a:hover { color: var(--text); border-color: var(--primary); transform: translateY(-1px); }
+
+  /* ---------- SECTION ---------- */
+  section.lesson {
+    margin-top: 36px;
+    background: linear-gradient(180deg, var(--card), var(--bg-soft));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 26px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  }
+  .lesson h2 {
+    margin: 0 0 6px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .prop {
+    font-family: ui-monospace, "Cascadia Code", monospace;
+    color: var(--primary-2);
+  }
+  .desc { color: var(--muted); margin: 0 0 18px; }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .controls button {
+    font-family: ui-monospace, "Cascadia Code", monospace;
+    background: var(--card-2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 9px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all .15s ease;
+  }
+  .controls button:hover { color: var(--text); border-color: var(--primary); }
+  .controls button.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(124, 92, 255, .4);
+  }
+
+  /* ---------- DEMO BOX ---------- */
+  .stage {
+    position: relative;
+    background: var(--demo-bg);
+    border: 1px dashed var(--demo-border);
+    border-radius: 12px;
+    padding: 22px;
+    min-height: 170px;
+    overflow: hidden;
+  }
+  .stage-label {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    font-family: ui-monospace, monospace;
+    opacity: .6;
+  }
+  .demo {
+    display: flex;
+    gap: 10px;
+    min-height: 130px;
+    transition: all .35s ease;
+    background: rgba(124, 92, 255, .05);
+    border: 1px solid rgba(124, 92, 255, .15);
+    border-radius: 10px;
+    padding: 12px;
+  }
+  .item {
+    background: linear-gradient(135deg, var(--primary), var(--primary-2));
+    color: #fff;
+    border-radius: 8px;
+    padding: 14px 10px;
+    min-width: 44px;
+    text-align: center;
+    font-weight: 700;
+    font-family: ui-monospace, monospace;
+    box-shadow: 0 4px 10px rgba(0,0,0,.25);
+    transition: all .35s ease;
+  }
+  .item:nth-child(odd) { background: linear-gradient(135deg, var(--accent), #b5179e); }
+
+  /* ---------- CODE BOX ---------- */
+  pre.code {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin: 14px 0 0;
+    overflow-x: auto;
+    font-family: ui-monospace, "Cascadia Code", monospace;
+    font-size: 13px;
+    color: #d7def7;
+    line-height: 1.7;
+  }
+  .code .k { color: #ff79c6; }      /* keyword/property */
+  .code .v { color: #8be9fd; }      /* value */
+  .code .c { color: #6b7394; font-style: italic; } /* comment */
+  .code .s { color: #f1fa8c; }      /* string/punct */
+
+  /* layout for stage + code */
+  .lab {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  @media (min-width: 760px) {
+    .lab { grid-template-columns: 1.1fr .9fr; align-items: start; }
+  }
+
+  .tip {
+    margin-top: 14px;
+    background: rgba(45, 212, 191, .07);
+    border-left: 3px solid var(--ok);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #c7f9ee;
+  }
+  .tip b { color: var(--ok); }
+
+  hr.sep {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 22px 0 0;
+  }
+
+  /* ---------- PLAYGROUND ---------- */
+  .playground {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  @media (min-width: 820px) {
+    .playground { grid-template-columns: 320px 1fr; align-items: start; }
+  }
+  .pg-panel {
+    background: var(--card-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .pg-panel h3 {
+    margin: 0 0 14px;
+    font-size: 16px;
+    color: var(--primary-2);
+  }
+  .pg-row { margin-bottom: 14px; }
+  .pg-row label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-family: ui-monospace, monospace;
+  }
+  .pg-row select {
+    width: 100%;
+    background: var(--demo-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px;
+    border-radius: 8px;
+    font-family: ui-monospace, monospace;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .pg-row select:focus { outline: 2px solid var(--primary); }
+
+  .pg-counter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .pg-counter button {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .pg-counter span { font-family: ui-monospace, monospace; color: var(--muted); font-size: 13px; }
+
+  footer {
+    text-align: center;
+    color: var(--muted);
+    margin-top: 50px;
+    font-size: 13px;
+  }
+  footer a { color: var(--primary-2); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="badge">Interactive · เรียนรู้ผ่านการลองเล่น</span>
+    <h1>CSS Flex Container Properties</h1>
+    <p class="sub">เข้าใจทุก property ของ flex container ผ่านตัวอย่างสด ๆ กดปุ่มแล้วเห็นผลทันที — ไม่ต้องเขียนโค้ดเอง</p>
+    <nav class="toc">
+      <a href="#display">display</a>
+      <a href="#flex-direction">flex-direction</a>
+      <a href="#flex-wrap">flex-wrap</a>
+      <a href="#flex-flow">flex-flow</a>
+      <a href="#justify-content">justify-content</a>
+      <a href="#align-items">align-items</a>
+      <a href="#playground">Playground</a>
+    </nav>
+  </header>
+
+  <!-- ============ DISPLAY ============ -->
+  <section class="lesson" id="display">
+    <h2><span class="prop">display</span> 🎬</h2>
+    <p class="desc">จุดเริ่มต้นของทุกอย่าง — เปลี่ยนให้ element กลายเป็น flex container ก่อน ถึงจะใช้ property อื่นได้</p>
+
+    <div class="controls" data-target="d-display">
+      <button data-value="flex" class="active">flex</button>
+      <button data-value="inline-flex">inline-flex</button>
+      <button data-value="block">block (ปิด)</button>
+    </div>
+
+    <div class="lab">
+      <div class="stage">
+        <span class="stage-label">ผลลัพธ์</span>
+        <div class="demo" id="d-display">
+          <div class="item">1</div><div class="item">2</div><div class="item">3</div>
+        </div>
+      </div>
+      <pre class="code" id="c-display"></pre>
+    </div>
+
+    <div class="tip"><b>สังเกต:</b> <code>flex</code> กินความกว้างเต็มบรรทัด (block-level) ส่วน <code>inline-flex</code> จะหดตัวตามเนื้อหาเหมือน inline element แต่ข้างในยังจัดเป็น flex อยู่</div>
+  </section>
+
+  <!-- ============ FLEX-DIRECTION ============ -->
+  <section class="lesson" id="flex-direction">
+    <h2><span class="prop">flex-direction</span> 🧭</h2>
+    <p class="desc">กำหนด "ทิศทางหลัก" (main-axis) ที่ flex items จะเรียงตัว — ทิศนี้คือแกนที่ <code>justify-content</code> ทำงาน</p>
+
+    <div class="controls" data-target="d-flex-direction">
+      <button data-value="row" class="active">row ➜</button>
+      <button data-value="row-reverse">row-reverse ⬅</button>
+      <button data-value="column">column ⬇</button>
+      <button data-value="column-reverse">column-reverse ⬆</button>
+    </div>
+
+    <div class="lab">
+      <div class="stage">
+        <span class="stage-label">main-axis เปลี่ยนตามทิศทาง</span>
+        <div class="demo" id="d-flex-direction">
+          <div class="item">A</div><div class="item">B</div><div class="item">C</div>
+        </div>
+      </div>
+      <pre class="code" id="c-flex-direction"></pre>
+    </div>
+
+    <div class="tip"><b>จำง่าย ๆ:</b> <code>row</code> = แนวนอน (ค่าเริ่มต้น), <code>column</code> = แนวตั้ง — เติม <code>-reverse</code> จะกลับทิศ</div>
+  </section>
+
+  <!-- ============ FLEX-WRAP ============ -->
+  <section class="lesson" id="flex-wrap">
+    <h2><span class="prop">flex-wrap</span> 🔄</h2>
+    <p class="desc">เมื่อพื้นที่ไม่พอ จะให้ items "ขึ้นบรรทัดใหม่" หรือ "บีบตัวจนแคบ"?</p>
+
+    <div class="controls" data-target="d-flex-wrap">
+      <button data-value="nowrap" class="active">nowrap</button>
+      <button data-value="wrap">wrap</button>
+      <button data-value="wrap-reverse">wrap-reverse</button>
+    </div>
+
+    <div class="lab">
+      <div class="stage">
+        <span class="stage-label">ลองดูเมื่อ items เยอะ</span>
+        <div class="demo" id="d-flex-wrap" style="min-width:0">
+          <div class="item">1</div><div class="item">2</div><div class="item">3</div>
+          <div class="item">4</div><div class="item">5</div><div class="item">6</div>
+          <div class="item">7</div><div class="item">8</div>
+        </div>
+      </div>
+      <pre class="code" id="c-flex-wrap"></pre>
+    </div>
+
+    <div class="tip"><b>nowrap (ค่าเริ่มต้น):</b> items จะถูกบีบให้แคบลงเพื่ออยู่ในบรรทัดเดียว ส่วน <code>wrap</code> จะขึ้นบรรทัดใหม่เมื่อไม่พอ</div>
+  </section>
+
+  <!-- ============ FLEX-FLOW ============ -->
+  <section class="lesson" id="flex-flow">
+    <h2><span class="prop">flex-flow</span> ✨</h2>
+    <p class="desc">เป็น <b>shorthand</b> รวม <code>flex-direction</code> + <code>flex-wrap</code> ไว้ในบรรทัดเดียว — สั้นและอ่านง่าย</p>
+
+    <div class="controls" data-target="d-flex-flow">
+      <button data-value="row nowrap" class="active">row nowrap</button>
+      <button data-value="row wrap">row wrap</button>
+      <button data-value="column wrap">column wrap</button>
+      <button data-value="row-reverse wrap">row-reverse wrap</button>
+    </div>
+
+    <div class="lab">
+      <div class="stage">
+        <span class="stage-label">= direction + wrap พร้อมกัน</span>
+        <div class="demo" id="d-flex-flow">
+          <div class="item">1</div><div class="item">2</div><div class="item">3</div>
+          <div class="item">4</div><div class="item">5</div><div class="item">6</div>
+        </div>
+      </div>
+      <pre class="code" id="c-flex-flow"></pre>
+    </div>
+
+    <div class="tip"><b>เขียนสั้นลง:</b> แทนที่จะพิมพ์ <code>flex-direction: row; flex-wrap: wrap;</code> สองบรรทัด ใช้ <code>flex-flow: row wrap;</code> บรรทัดเดียวจบ</div>
+  </section>
+
+  <!-- ============ JUSTIFY-CONTENT ============ -->
+  <section class="lesson" id="justify-content">
+    <h2><span class="prop">justify-content</span> ↔️</h2>
+    <p class="desc">จัด items ตาม <b>main-axis</b> (แกนหลัก = แนวเรียงของ items) เมื่อมีพื้นที่เหลือ</p>
+
+    <div class="controls" data-target="d-justify-content">
+      <button data-value="flex-start" class="active">flex-start</button>
+      <button data-value="flex-end">flex-end</button>
+      <button data-value="center">center</button>
+      <button data-value="space-between">space-between</button>
+      <button data-value="space-around">space-around</button>
+      <button data-value="space-evenly">space-evenly</button>
+    </div>
+
+    <div class="lab">
+      <div class="stage">
+        <span class="stage-label">main-axis = แนวนอน (เมื่อ row)</span>
+        <div class="demo" id="d-justify-content">
+          <div class="item">1</div><div class="item">2</div><div class="item">3</div>
+        </div>
+      </div>
+      <pre class="code" id="c-justify-content"></pre>
+    </div>
+
+    <div class="tip">
+      <b>เปรียบเทียบ:</b><br>
+      • <code>space-between</code> — ช่องว่างเฉพาะ <i>ระหว่าง</i> items (ขอบสุดชิดขอบ)<br>
+      • <code>space-around</code> — แต่ละ item มีช่องว่าง <i>รอบตัว</i> (ขอบนอกครึ่งหนึ่ง)<br>
+      • <code>space-evenly</code> — ช่องว่าง <i>เท่ากันหมด</i> รวมขอบนอก
+    </div>
+  </section>
+
+  <!-- ============ ALIGN-ITEMS ============ -->
+  <section class="lesson" id="align-items">
+    <h2><span class="prop">align-items</span> ↕️</h2>
+    <p class="desc">จัด items ตาม <b>cross-axis</b> (แกนตั้งฉาก = แนวที่ตั้งฉากกับการเรียง) เช่น กรณี row คือแนวตั้ง</p>
+
+    <div class="controls" data-target="d-align-items">
+      <button data-value="stretch" class="active">stretch</button>
+      <button data-value="flex-start">flex-start</button>
+      <button data-value="flex-end">flex-end</button>
+      <button data-value="center">center</button>
+      <button data-value="baseline">baseline</button>
+    </div>
+
+    <div class="lab">
+      <div class="stage">
+        <span class="stage-label">cross-axis = แนวตั้ง (เมื่อ row)</span>
+        <div class="demo" id="d-align-items" style="min-height:170px; align-items:stretch">
+          <div class="item" style="padding:8px 10px">S</div>
+          <div class="item" style="padding:24px 10px">M</div>
+          <div class="item" style="padding:40px 10px">L</div>
+          <div class="item" style="padding:14px 10px">X</div>
+        </div>
+      </div>
+      <pre class="code" id="c-align-items"></pre>
+    </div>
+
+    <div class="tip">
+      <b>สังเกตขนาดต่างกัน:</b> แต่ละ item สูงไม่เท่ากัน ลองสลับค่าเพื่อดูความแตกต่าง<br>
+      • <code>stretch</code> (ค่าเริ่มต้น) — ยืดให้เต็มความสูง<br>
+      • <code>baseline</code> — จัดตามเส้นฐานของตัวอักษร
+    </div>
+  </section>
+
+  <!-- ============ PLAYGROUND ============ -->
+  <section class="lesson" id="playground">
+    <h2>🎮 Playground รวมทุก property</h2>
+    <p class="desc">ปรับทุกค่าพร้อมกัน แล้วก๊อปปี้โค้ดไปใช้ได้เลย</p>
+
+    <div class="playground">
+      <div class="pg-panel">
+        <h3>⚙️ ตั้งค่า</h3>
+
+        <div class="pg-row">
+          <label>display</label>
+          <select id="pg-display">
+            <option value="flex">flex</option>
+            <option value="inline-flex">inline-flex</option>
+          </select>
+        </div>
+        <div class="pg-row">
+          <label>flex-direction</label>
+          <select id="pg-direction">
+            <option value="row">row</option>
+            <option value="row-reverse">row-reverse</option>
+            <option value="column">column</option>
+            <option value="column-reverse">column-reverse</option>
+          </select>
+        </div>
+        <div class="pg-row">
+          <label>flex-wrap</label>
+          <select id="pg-wrap">
+            <option value="nowrap">nowrap</option>
+            <option value="wrap">wrap</option>
+            <option value="wrap-reverse">wrap-reverse</option>
+          </select>
+        </div>
+        <div class="pg-row">
+          <label>justify-content</label>
+          <select id="pg-justify">
+            <option value="flex-start">flex-start</option>
+            <option value="flex-end">flex-end</option>
+            <option value="center">center</option>
+            <option value="space-between">space-between</option>
+            <option value="space-around">space-around</option>
+            <option value="space-evenly">space-evenly</option>
+          </select>
+        </div>
+        <div class="pg-row">
+          <label>align-items</label>
+          <select id="pg-align">
+            <option value="stretch">stretch</option>
+            <option value="flex-start">flex-start</option>
+            <option value="flex-end">flex-end</option>
+            <option value="center">center</option>
+            <option value="baseline">baseline</option>
+          </select>
+        </div>
+
+        <div class="pg-row">
+          <label>จำนวน items</label>
+          <div class="pg-counter">
+            <button id="pg-minus">−</button>
+            <span id="pg-count">3</span>
+            <button id="pg-plus">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="stage" style="min-height:260px">
+          <span class="stage-label">Live Preview</span>
+          <div class="demo" id="pg-demo" style="min-height:200px"></div>
+        </div>
+        <pre class="code" id="pg-code"></pre>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    ทำด้วย ❤️ — ลองเปิดไฟล์นี้ในเบราว์เซอร์แล้วกดเล่นได้เลย · เนื้อหาอ้างอิง <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_flexible_box_layout" target="_blank" rel="noopener">MDN Flexbox</a>
+  </footer>
+</div>
+
+<script>
+  /* ---------- ตัวช่วยเขียนโค้ดที่มีสี ---------- */
+  function highlight(prop, value) {
+    // แยกคำเพื่อใส่สี — value เดียวหรือหลายค่า
+    const vals = value.split(' ').map(v => `<span class="v">${v}</span>`).join(' ');
+    return `<span class="k">${prop}</span><span class="s">:</span> ${vals}<span class="s">;</span>`;
+  }
+
+  /* ---------- อัปเดต demo + code แต่ละ section ---------- */
+  function setupSection(targetId, codeId, prop) {
+    const demo = document.getElementById(targetId);
+    const codeEl = document.getElementById(codeId);
+    const controls = demo.closest('.lesson').querySelector('.controls');
+    const buttons = controls.querySelectorAll('button');
+
+    function apply(value, btn) {
+      if (value === 'block') {
+        demo.style.display = 'block';
+        codeEl.innerHTML = `<span class="c">/* ยังไม่ใช่ flex container ใช้ property อื่นไม่ได้ */</span>\n<span class="k">display</span><span class="s">:</span> <span class="v">block</span><span class="s">;</span>`;
+      } else if (prop === 'display') {
+        demo.style.display = value;
+        codeEl.innerHTML = highlight('display', value);
+      } else {
+        // เป็น property ธรรมดา ต้องแน่ใจว่า demo เป็น flex อยู่
+        demo.style.display = 'flex';
+        demo.style[prop] = value;
+        codeEl.innerHTML = `<span class="c">.container {</span>\n  ${highlight(prop, value)}\n<span class="c">}</span>`;
+      }
+      buttons.forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    // ค่าเริ่มต้น — เปิดใช้ค่าแรกของแต่ละ section
+    const activeBtn = controls.querySelector('button.active') || buttons[0];
+    apply(activeBtn.dataset.value, activeBtn);
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => apply(btn.dataset.value, btn));
+    });
+  }
+
+  // ตั้งค่าทุก section
+  setupSection('d-display',          'c-display',          'display');
+  setupSection('d-flex-direction',   'c-flex-direction',   'flexDirection');
+  setupSection('d-flex-wrap',        'c-flex-wrap',        'flexWrap');
+  setupSection('d-flex-flow',        'c-flex-flow',        'flexFlow');
+  setupSection('d-justify-content',  'c-justify-content',  'justifyContent');
+  setupSection('d-align-items',      'c-align-items',      'alignItems');
+
+  /* ---------- PLAYGROUND ---------- */
+  const pg = {
+    demo: document.getElementById('pg-demo'),
+    code: document.getElementById('pg-code'),
+    count: 3,
+    el: {
+      display:   document.getElementById('pg-display'),
+      direction: document.getElementById('pg-direction'),
+      wrap:      document.getElementById('pg-wrap'),
+      justify:   document.getElementById('pg-justify'),
+      align:     document.getElementById('pg-align'),
+      count:     document.getElementById('pg-count'),
+      minus:     document.getElementById('pg-minus'),
+      plus:      document.getElementById('pg-plus'),
+    }
+  };
+
+  function renderPG() {
+    const d = pg.el.display.value;
+    const dir = pg.el.direction.value;
+    const wr = pg.el.wrap.value;
+    const ju = pg.el.justify.value;
+    const al = pg.el.align.value;
+
+    pg.demo.style.display = d;
+    pg.demo.style.flexDirection = dir;
+    pg.demo.style.flexWrap = wr;
+    pg.demo.style.justifyContent = ju;
+    pg.demo.style.alignItems = al;
+
+    // สร้าง items ตามจำนวน
+    pg.demo.innerHTML = '';
+    for (let i = 1; i <= pg.count; i++) {
+      const it = document.createElement('div');
+      it.className = 'item';
+      it.textContent = i;
+      pg.demo.appendChild(it);
+    }
+    pg.el.count.textContent = pg.count;
+
+    pg.code.innerHTML =
+      `<span class="c">.container {</span>\n` +
+      `  ${highlight('display', d)}\n` +
+      `  ${highlight('flex-direction', dir)}\n` +
+      `  ${highlight('flex-wrap', wr)}\n` +
+      `  ${highlight('justify-content', ju)}\n` +
+      `  ${highlight('align-items', al)}\n` +
+      `<span class="c">}</span>`;
+  }
+
+  [pg.el.display, pg.el.direction, pg.el.wrap, pg.el.justify, pg.el.align]
+    .forEach(s => s.addEventListener('change', renderPG));
+
+  pg.el.plus.addEventListener('click', () => { if (pg.count < 12) { pg.count++; renderPG(); } });
+  pg.el.minus.addEventListener('click', () => { if (pg.count > 1) { pg.count--; renderPG(); } });
+
+  renderPG();
+</script>
+</body>
+</html>

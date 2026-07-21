@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>flex-flow Lab — shorthand 2-in-1 · CSS Flexbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============ THEME TOKENS ============ */
+  :root {
+    --bg: #faf9f6;
+    --bg-soft: #f1efe9;
+    --surface: #ffffff;
+    --surface-2: #f7f5f0;
+    --text: #1a1a1a;
+    --text-soft: #555;
+    --muted: #888;
+    --border: #e4e1d8;
+    --border-strong: #d4cfc2;
+    --primary: #c8412d;
+    --primary-soft: #fde8e4;
+    --accent: #1f6feb;
+    --accent-soft: #e3edff;
+    --ok: #1a7f5a;
+    --ok-soft: #d8f3e7;
+    --warn: #b8731a;
+    --warn-soft: #fcefd6;
+    --demo-bg: #ffffff;
+    --demo-border: #e4e1d8;
+    --code-bg: #f6f3ec;
+    --code-text: #2a2a2a;
+    --code-k: #c8412d;
+    --code-v: #1f6feb;
+    --code-c: #8a8578;
+    --code-s: #b8731a;
+    --item-a: #c8412d;
+    --item-b: #1f6feb;
+    --item-c: #555;
+    --item-d: #b8731a;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.05);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,.06), 0 20px 40px rgba(0,0,0,.08);
+  }
+  [data-theme="dark"] {
+    --bg: #131520;
+    --bg-soft: #1a1d2e;
+    --surface: #1e2236;
+    --surface-2: #232848;
+    --text: #e8ebff;
+    --text-soft: #b4b9d6;
+    --muted: #7e85a8;
+    --border: #2d3160;
+    --border-strong: #3d4280;
+    --primary: #ff6b54;
+    --primary-soft: #3a1d1a;
+    --accent: #5ea8ff;
+    --accent-soft: #1a2748;
+    --ok: #4dd6a8;
+    --ok-soft: #16321f;
+    --warn: #f0b860;
+    --warn-soft: #3a2a0e;
+    --demo-bg: #0c0f1e;
+    --demo-border: #2d3160;
+    --code-bg: #0c0f1e;
+    --code-text: #d7def7;
+    --code-k: #ff8aaf;
+    --code-v: #8be9fd;
+    --code-c: #6b7394;
+    --code-s: #f1fa8c;
+    --item-a: #ff6b54;
+    --item-b: #5ea8ff;
+    --item-c: #b4b9d6;
+    --item-d: #f0b860;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.3);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,.3), 0 20px 40px rgba(0,0,0,.4);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: "IBM Plex Sans Thai", "Mitr", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    font-size: 17px;
+    transition: background .3s ease, color .3s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ NAV ============ */
+  nav.topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+  }
+  .brand { display:flex; align-items:center; gap:10px; font-family:"Mitr",sans-serif; font-weight:600; font-size:15px; color:var(--text); text-decoration:none; letter-spacing:.3px; }
+  .brand-mark { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--primary); color:#fff; border-radius:7px; font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:600; }
+  .brand .sep { color:var(--muted); font-weight:400; }
+  .brand .prop-name { color:var(--primary); font-family:"IBM Plex Mono",monospace; font-size:14px; }
+  .nav-actions { display:flex; align-items:center; gap:12px; }
+  .theme-toggle { display:inline-flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--border); color:var(--text-soft); padding:7px 12px; border-radius:999px; cursor:pointer; font-family:inherit; font-size:13px; transition:all .2s ease; }
+  .theme-toggle:hover { border-color:var(--primary); color:var(--text); }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+  /* ============ HERO ============ */
+  header.hero { padding: 60px 0 30px; text-align: center; }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:var(--primary); background:var(--primary-soft); padding:6px 14px; border-radius:999px; margin-bottom:24px; }
+  .eyebrow .dot { width:6px; height:6px; background:var(--primary); border-radius:50%; }
+  h1.title { font-family:"IBM Plex Mono",monospace; font-size:clamp(38px,8vw,68px); font-weight:600; margin:0 0 18px; line-height:1.05; letter-spacing:-1.5px; }
+  h1.title .brace { color:var(--muted); font-weight:400; }
+  h1.title .name { color:var(--primary); }
+  .lede { font-size:20px; color:var(--text-soft); max-width:640px; margin:0 auto; line-height:1.55; font-weight:300; }
+  .lede b { color:var(--text); font-weight:600; }
+  .lede code, p code, li code { font-family:"IBM Plex Mono",monospace; font-size:.86em; background:var(--surface-2); border:1px solid var(--border); padding:2px 7px; border-radius:5px; color:var(--primary); }
+  .hero-meta { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin-top:28px; font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted); }
+  .hero-meta b { color:var(--text-soft); font-weight:500; }
+
+  /* ============ MEGA PLAYGROUND ============ */
+  .mega {
+    margin: 40px 0 60px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .mega-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px; border-bottom:1px solid var(--border); background:var(--surface-2);
+  }
+  .mega-title { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:8px; }
+  .mega-dots { display:flex; gap:6px; }
+  .mega-dots span { width:10px; height:10px; border-radius:50%; background:var(--border-strong); }
+  .mega-actions { display:flex; gap:8px; }
+  .mega-btn {
+    font-family:"IBM Plex Mono",monospace; font-size:12px;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--text-soft); padding:6px 11px; border-radius:7px; cursor:pointer;
+    transition:all .15s ease; display:inline-flex; align-items:center; gap:5px;
+  }
+  .mega-btn:hover { border-color:var(--primary); color:var(--text); }
+  .mega-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+  .mega-body { display:grid; grid-template-columns:1fr; }
+  @media (min-width: 760px) { .mega-body { grid-template-columns: 1fr 300px; } }
+
+  .mega-stage {
+    position: relative;
+    padding: 28px;
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 24px 24px,
+      var(--demo-bg);
+    border-right: 1px solid var(--border);
+    min-height: 360px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  [data-theme="dark"] .mega-stage {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 24px 24px,
+      var(--demo-bg);
+  }
+
+  .stage-frame {
+    position: relative;
+    width: 100%;
+    max-width: var(--stage-w, 380px);
+    transition: max-width .25s ease;
+  }
+  .stage-frame .resize-handle {
+    position: absolute;
+    right: -7px; bottom: -7px;
+    width: 16px; height: 16px;
+    background: var(--primary);
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    cursor: ew-resize;
+    z-index: 5;
+    box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  }
+  .stage-frame .resize-hint {
+    position: absolute;
+    right: -2px; bottom: -28px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .demo {
+    display: flex;
+    gap: 10px;
+    min-height: 200px;
+    transition: all .35s cubic-bezier(.4,0,.2,1);
+    border: 2px dashed transparent;
+    border-radius: 8px;
+  }
+  .demo .item {
+    flex: 0 0 auto;
+    min-width: 56px; min-height: 56px; width: 56px; height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 9px; color:#fff;
+    font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:17px;
+    box-shadow: var(--shadow);
+    position: relative;
+    transition: all .35s cubic-bezier(.4,0,.2,1);
+  }
+  .demo .item:nth-child(4n+1) { background: var(--item-a); }
+  .demo .item:nth-child(4n+2) { background: var(--item-b); }
+  .demo .item:nth-child(4n+3) { background: var(--item-c); }
+  .demo .item:nth-child(4n+4) { background: var(--item-d); }
+
+  /* DOM index badge */
+  .demo.show-dom .item::after {
+    content: attr(data-dom);
+    position: absolute;
+    top: -8px; left: -8px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: 10px;
+    font-weight: 700;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--surface);
+  }
+
+  .mega-panel {
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 14px;
+    background: var(--surface);
+  }
+  .pg-group label {
+    font-family:"IBM Plex Mono",monospace; font-size:11px;
+    text-transform:uppercase; letter-spacing:1px;
+    color:var(--muted); display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 6px;
+  }
+  .pg-group label .hint { color: var(--primary); text-transform:none; letter-spacing:0; font-size:10px; }
+  .pg-btns { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+  .pg-btns.three { grid-template-columns: 1fr 1fr 1fr; }
+  .pg-btns.six { grid-template-columns: 1fr 1fr 1fr; }
+  .pg-btns button {
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px;
+    padding:8px 6px; border:1px solid var(--border);
+    background:var(--surface-2); color:var(--text-soft);
+    border-radius:6px; cursor:pointer; transition:all .15s ease;
+  }
+  .pg-btns button:hover { border-color:var(--primary); color:var(--text); }
+  .pg-btns button.active {
+    background:var(--primary); color:#fff; border-color:var(--primary);
+    box-shadow:0 2px 8px color-mix(in srgb, var(--primary) 40%, transparent);
+  }
+
+  .pg-counter { display:flex; align-items:center; gap:10px; }
+  .pg-counter button {
+    width:30px; height:30px; border-radius:7px;
+    border:1px solid var(--border); background:var(--surface-2);
+    color:var(--text); font-size:16px; cursor:pointer; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .15s ease;
+  }
+  .pg-counter button:hover { border-color:var(--primary); }
+  .pg-counter button:disabled { opacity:.3; cursor:not-allowed; }
+  .pg-counter .count { font-family:"IBM Plex Mono",monospace; font-size:14px; color:var(--text); min-width:24px; text-align:center; }
+
+  .pg-code {
+    background:var(--code-bg); border:1px solid var(--border);
+    border-radius:8px; padding:12px;
+    font-family:"IBM Plex Mono",monospace; font-size:12px;
+    color:var(--code-text); line-height:1.75; overflow-x:auto;
+    position: relative;
+  }
+  .pg-code .k { color:var(--code-k); }
+  .pg-code .v { color:var(--code-v); }
+  .pg-code .s { color:var(--code-s); }
+  .pg-code .c { color:var(--code-c); font-style:italic; }
+  .pg-code .hl-line {
+    background: color-mix(in srgb, var(--primary) 12%, transparent);
+    display:inline-block; width: calc(100% + 8px);
+    margin-left: -4px; padding: 1px 4px; border-radius: 4px;
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 35%, transparent);
+  }
+  .copy-btn {
+    position: absolute; top:8px; right:8px;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--text-soft); padding:4px 9px; border-radius:5px;
+    font-family:"IBM Plex Mono",monospace; font-size:11px;
+    cursor:pointer; transition:all .15s ease;
+  }
+  .copy-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .copy-btn.copied { background:var(--ok); color:#fff; border-color:var(--ok); }
+
+  /* ============ SECTIONS ============ */
+  section.block { padding: 56px 0; border-top: 1px solid var(--border); }
+  section.block:first-of-type { border-top: none; }
+  .section-num { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--primary); margin-bottom:8px; letter-spacing:1px; }
+  h2 { font-family:"Mitr",sans-serif; font-size:clamp(26px,4.5vw,36px); font-weight:600; margin:0 0 18px; line-height:1.2; letter-spacing:-.3px; }
+  h2 .accent { color:var(--primary); }
+  h3 { font-family:"Mitr",sans-serif; font-size:20px; font-weight:600; margin:32px 0 12px; }
+  p.lead { font-size:18px; color:var(--text-soft); line-height:1.75; margin:0 0 18px; }
+  p.lead b, p b { color:var(--text); font-weight:600; }
+
+  /* ============ SHORTHAND COMPARE (Section 01) ============ */
+  .sh-compare {
+    display: grid; grid-template-columns: 1fr; gap: 18px;
+    margin: 24px 0;
+  }
+  @media (min-width: 720px) { .sh-compare { grid-template-columns: 1fr 1fr; align-items: stretch; } }
+  .sh-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 12px;
+    position: relative;
+  }
+  .sh-card.long { border-top: 4px solid var(--muted); }
+  .sh-card.short { border-top: 4px solid var(--primary); background: linear-gradient(180deg,var(--primary-soft),var(--surface)); }
+  .sh-tag { font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+  .sh-tag b { color: var(--text); }
+  .sh-card.short .sh-tag b { color: var(--primary); }
+  .sh-code {
+    background:var(--code-bg); border:1px solid var(--border);
+    border-radius:10px; padding:14px;
+    font-family:"IBM Plex Mono",monospace; font-size:13px;
+    color:var(--code-text); line-height:1.85; overflow-x:auto;
+  }
+  .sh-code .k { color:var(--code-k); }
+  .sh-code .v { color:var(--code-v); }
+  .sh-code .s { color:var(--code-s); }
+  .sh-code .c { color:var(--code-c); font-style:italic; }
+  .sh-code .hl-line {
+    background: color-mix(in srgb, var(--primary) 14%, transparent);
+    display:inline-block; width: calc(100% + 8px);
+    margin-left: -4px; padding: 1px 4px; border-radius: 4px;
+  }
+  .sh-preview {
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 16px 16px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 16px 16px,
+      var(--demo-bg);
+    border-radius:10px; padding:12px; min-height:120px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  [data-theme="dark"] .sh-preview {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 16px 16px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 16px 16px,
+      var(--demo-bg);
+  }
+  .sh-preview .mini {
+    display:flex; gap:6px; width: 100%; max-width: 240px;
+    align-items:center; justify-content:center;
+    transition: all .35s ease;
+  }
+  .sh-preview .mini i {
+    flex: 0 0 auto; width: 34px; height: 34px;
+    border-radius: 7px; color:#fff;
+    font-family:"IBM Plex Mono",monospace; font-style:normal; font-weight:600; font-size:13px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .sh-preview .mini i:nth-child(1) { background: var(--item-a); }
+  .sh-preview .mini i:nth-child(2) { background: var(--item-b); }
+  .sh-preview .mini i:nth-child(3) { background: var(--item-c); }
+  .sh-preview .mini i:nth-child(4) { background: var(--item-d); }
+  .sh-arrow {
+    text-align: center; font-family:"IBM Plex Mono",monospace;
+    font-size: 22px; color: var(--primary); font-weight: 700;
+    margin: -4px 0;
+  }
+
+  /* ============ COMBO CARDS (Section 02) ============ */
+  .values-grid { display:grid; grid-template-columns:1fr; gap:14px; margin:24px 0; }
+  @media (min-width: 680px) { .values-grid { grid-template-columns:1fr 1fr; } }
+  .value-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:18px; box-shadow:var(--shadow);
+    cursor:pointer; transition:all .2s ease;
+    position: relative;
+  }
+  .value-card:hover { border-color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+  .value-card.selected { border-color:var(--primary); background:linear-gradient(180deg,var(--primary-soft),var(--surface)); }
+  .value-card .vc-try {
+    position:absolute; top:14px; right:14px;
+    font-family:"IBM Plex Mono",monospace; font-size:10px;
+    color:var(--primary); opacity:0; transition:opacity .2s;
+  }
+  .value-card:hover .vc-try { opacity:1; }
+  .value-card .vc-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px; gap:8px; }
+  .value-card .vc-name { font-family:"IBM Plex Mono",monospace; font-size:15px; color:var(--primary); font-weight:600; }
+  .value-card .vc-badge { font-family:"IBM Plex Mono",monospace; font-size:10px; background:var(--surface-2); border:1px solid var(--border); color:var(--text-soft); padding:3px 7px; border-radius:999px; }
+  .value-card .vc-demo {
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 16px 16px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 16px 16px,
+      var(--demo-bg);
+    border-radius:8px; padding:10px; min-height:90px; margin-bottom:10px; display:flex;
+  }
+  [data-theme="dark"] .value-card .vc-demo {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 16px 16px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 16px 16px,
+      var(--demo-bg);
+  }
+  .vc-mini { display:flex; gap:4px; transition:all .3s ease; width:100%; align-content:flex-start; flex-wrap:wrap; }
+  .vc-mini i {
+    flex:0 0 auto; width:28px; height:28px;
+    background:var(--item-a); color:#fff; border-radius:5px;
+    font-family:"IBM Plex Mono",monospace; font-style:normal; font-size:11px; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .vc-mini i:nth-child(2) { background:var(--item-b); }
+  .vc-mini i:nth-child(3) { background:var(--item-c); }
+  .vc-mini i:nth-child(4) { background:var(--item-d); }
+  .vc-mini i:nth-child(5) { background:var(--item-a); }
+  .vc-mini i:nth-child(6) { background:var(--item-b); }
+  .value-card .vc-desc { font-size:14px; color:var(--text-soft); margin:0; line-height:1.6; }
+
+  /* ============ GAME ============ */
+  .game {
+    background: linear-gradient(135deg, var(--accent-soft), var(--surface));
+    border:1px solid var(--border); border-radius:16px;
+    padding:24px; margin:24px 0; box-shadow:var(--shadow);
+  }
+  .game-head { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; }
+  .game-head h3 { margin:0; }
+  .game-score { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--text-soft); background:var(--surface); padding:6px 12px; border-radius:999px; border:1px solid var(--border); }
+  .game-score b { color:var(--ok); }
+  .game-prompt { font-size:15px; color:var(--text-soft); margin:0 0 14px; }
+  .game-prompt b { color:var(--text); }
+  .game-target-wrap { display:grid; grid-template-columns:1fr; gap:14px; }
+  @media (min-width: 680px) { .game-target-wrap { grid-template-columns:1fr 1fr; } }
+  .game-box-label { font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+  .game-stage {
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+    border:1px solid var(--border); border-radius:10px;
+    padding:16px; min-height:160px; display:flex;
+  }
+  [data-theme="dark"] .game-stage {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+  }
+  .game-stage .demo { min-height:120px; flex:1; }
+  .game-choices { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:14px; }
+  @media (min-width: 560px) { .game-choices { grid-template-columns: 1fr 1fr 1fr; } }
+  .game-choices button {
+    font-family:"IBM Plex Mono",monospace; font-size:12.5px;
+    padding:11px 6px; border:2px solid var(--border);
+    background:var(--surface); color:var(--text-soft);
+    border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .game-choices button:hover:not(:disabled) { border-color:var(--primary); color:var(--text); }
+  .game-choices button.correct { background:var(--ok); color:#fff; border-color:var(--ok); }
+  .game-choices button.wrong { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .game-choices button:disabled { cursor:not-allowed; opacity:.7; }
+  .game-feedback { margin-top:14px; padding:12px 14px; border-radius:8px; font-size:14px; display:none; }
+  .game-feedback.show { display:block; }
+  .game-feedback.win { background:var(--ok-soft); color:var(--ok); border-left:3px solid var(--ok); }
+  .game-feedback.lose { background:var(--primary-soft); color:var(--primary); border-left:3px solid var(--primary); }
+  .game-next { margin-top:12px; font-family:"IBM Plex Mono",monospace; font-size:13px; background:var(--primary); color:#fff; border:none; padding:9px 16px; border-radius:8px; cursor:pointer; display:none; }
+  .game-next.show { display:inline-block; }
+
+  /* ============ ORDER DEMO (Section 04) ============ */
+  .order-demo-wrap { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; margin:24px 0; box-shadow:var(--shadow); }
+  .order-controls { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:14px; }
+  .order-controls .lbl { font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .order-controls button {
+    font-family:"IBM Plex Mono",monospace; font-size:13px;
+    padding:8px 14px; border:1px solid var(--border);
+    background:var(--surface-2); color:var(--text-soft);
+    border-radius:7px; cursor:pointer; transition:all .15s;
+  }
+  .order-controls button:hover { border-color:var(--primary); color:var(--text); }
+  .order-controls button.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .order-stage {
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+    border:1px solid var(--border); border-radius:10px;
+    padding:24px; min-height:160px; display:flex;
+  }
+  [data-theme="dark"] .order-stage {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+  }
+  .order-stage .demo { min-height:120px; }
+  .order-code {
+    margin-top:14px; background:var(--code-bg); border:1px solid var(--border);
+    border-radius:8px; padding:12px 14px;
+    font-family:"IBM Plex Mono",monospace; font-size:13px;
+    color:var(--code-text); line-height:1.7; overflow-x:auto;
+  }
+  .order-code .k { color:var(--code-k); }
+  .order-code .v { color:var(--code-v); }
+  .order-code .s { color:var(--code-s); }
+  .order-code .c { color:var(--code-c); font-style:italic; }
+  .order-note { margin-top:14px; padding:12px 14px; background:var(--accent-soft); border-left:3px solid var(--accent); border-radius:6px; font-size:14px; color:var(--text); }
+  .order-note b { color:var(--accent); }
+
+  /* ============ PITFALLS ============ */
+  .pitfalls { margin:24px 0; display:flex; flex-direction:column; gap:14px; }
+  .pitfall { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--warn); border-radius:10px; padding:16px 18px; box-shadow:var(--shadow); }
+  .pitfall h4 { margin:0 0 6px; font-family:"Mitr",sans-serif; font-size:16px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .pitfall h4 .ic { color:var(--warn); }
+  .pitfall p { margin:0; font-size:15px; color:var(--text-soft); line-height:1.65; }
+  .pitfall .demo-inline {
+    margin-top: 10px; display:flex; gap:6px;
+    background:var(--code-bg); border:1px solid var(--border);
+    border-radius:7px; padding:10px;
+    font-family:"IBM Plex Mono",monospace; font-size:12px;
+    color:var(--code-text); line-height:1.7; flex-wrap:wrap;
+  }
+  .pitfall .demo-inline .k { color:var(--code-k); }
+  .pitfall .demo-inline .v { color:var(--code-v); }
+  .pitfall .demo-inline .s { color:var(--code-s); }
+  .pitfall .demo-inline .c { color:var(--code-c); font-style:italic; }
+  .pitfall .demo-inline strike { color: var(--muted); text-decoration: line-through; }
+
+  /* ============ CHEATSHEET ============ */
+  .cheatsheet { background:linear-gradient(135deg,var(--primary-soft),var(--surface)); border:1px solid var(--border); border-radius:16px; padding:28px; margin:24px 0; box-shadow:var(--shadow); }
+  .cheatsheet h3 { margin-top:0; }
+  .cheat-table { width:100%; border-collapse:collapse; font-size:14px; }
+  .cheat-table th, .cheat-table td { text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); }
+  .cheat-table th { font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); font-weight:500; }
+  .cheat-table td:first-child { font-family:"IBM Plex Mono",monospace; color:var(--primary); font-weight:600; white-space:nowrap; }
+  .cheat-table tr:last-child td { border-bottom:none; }
+
+  /* matrix grid for combos */
+  .matrix-wrap { overflow-x:auto; margin-top: 14px; }
+  .matrix {
+    display: grid;
+    grid-template-columns: 90px repeat(3, 1fr);
+    gap: 6px;
+    min-width: 480px;
+  }
+  .matrix .mh {
+    font-family:"IBM Plex Mono",monospace; font-size:11px;
+    text-transform:uppercase; letter-spacing:.5px; color:var(--muted);
+    text-align:center; padding:6px 4px; font-weight:500;
+  }
+  .matrix .mr {
+    font-family:"IBM Plex Mono",monospace; font-size:11px;
+    color:var(--muted); padding:6px 8px;
+    display:flex; align-items:center; font-weight:500;
+  }
+  .matrix .mc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 6px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    transition: all .2s ease;
+  }
+  .matrix .mc:hover { border-color: var(--primary); transform: translateY(-1px); }
+  .matrix .mc.popular { border-color: var(--primary); background: linear-gradient(180deg,var(--primary-soft),var(--surface)); }
+  .matrix .mc-demo {
+    display:flex; gap:2px; flex-wrap:wrap; align-content:flex-start;
+    width: 56px; height: 40px;
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 8px 8px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 8px 8px,
+      var(--demo-bg);
+    border-radius: 4px; padding: 3px;
+  }
+  [data-theme="dark"] .matrix .mc-demo {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 8px 8px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 8px 8px,
+      var(--demo-bg);
+  }
+  .matrix .mc-demo i {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    background: var(--item-a);
+  }
+  .matrix .mc-demo i:nth-child(2) { background: var(--item-b); }
+  .matrix .mc-demo i:nth-child(3) { background: var(--item-c); }
+  .matrix .mc-demo i:nth-child(4) { background: var(--item-d); }
+  .matrix .mc-demo i:nth-child(5) { background: var(--item-a); }
+  .matrix .mc-demo i:nth-child(6) { background: var(--item-b); }
+  .matrix .mc-code {
+    font-family:"IBM Plex Mono",monospace; font-size:9.5px;
+    color: var(--text-soft); text-align:center; line-height:1.2;
+  }
+  .matrix .mc.star::before {
+    content: "★"; color: var(--primary); font-size: 10px;
+    position: absolute; transform: translateY(-22px);
+  }
+  .matrix .mc { position: relative; }
+
+  .callout { background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:8px; padding:16px 18px; margin:24px 0; font-size:15px; color:var(--text); line-height:1.7; }
+  .callout b { color:var(--accent); }
+
+  pre.block-code { background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin:18px 0; font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--code-text); line-height:1.75; overflow-x:auto; }
+  pre.block-code .k { color:var(--code-k); }
+  pre.block-code .v { color:var(--code-v); }
+  pre.block-code .s { color:var(--code-s); }
+  pre.block-code .c { color:var(--code-c); font-style:italic; }
+
+  /* ============ FOOTER ============ */
+  footer.site { border-top:1px solid var(--border); padding:40px 0 60px; margin-top:40px; text-align:center; }
+  footer.site .prev-next { display:grid; grid-template-columns:1fr; gap:14px; max-width:760px; margin:0 auto 30px; }
+  @media (min-width: 720px) { footer.site .prev-next { grid-template-columns: 1fr 1fr; } }
+  footer.site .pn {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:20px; box-shadow:var(--shadow);
+    text-decoration:none; color:inherit; transition:all .2s ease;
+    display:block; text-align:left;
+  }
+  footer.site .pn:hover { border-color:var(--primary); transform: translateY(-2px); box-shadow:var(--shadow-lg); }
+  footer.site .pn-label { font-family:"IBM Plex Mono",monospace; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:6px; }
+  footer.site .pn-name { font-family:"Mitr",sans-serif; font-size:18px; font-weight:600; margin-bottom:4px; }
+  footer.site .pn-name .p { color:var(--primary); font-family:"IBM Plex Mono",monospace; font-size:15px; }
+  footer.site .pn-desc { font-size:13px; color:var(--text-soft); margin:0; }
+  footer.site .pn.next .pn-name::after { content: " →"; color: var(--primary); }
+  footer.site .pn.prev .pn-label::before { content: "← "; }
+  footer.site .credit { font-size:13px; color:var(--muted); }
+  footer.site .credit a { color:var(--accent); text-decoration:none; }
+
+  .progress-line { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--primary),var(--accent)); width:0%; z-index:100; transition:width .1s linear; }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--text); color:var(--bg);
+    padding:10px 18px; border-radius:999px;
+    font-family:"IBM Plex Mono",monospace; font-size:13px;
+    box-shadow:var(--shadow-lg); z-index:200;
+    opacity:0; pointer-events:none;
+    transition:all .3s cubic-bezier(.4,0,.2,1);
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ============ SIDEBAR ============ */
+  .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 150; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+  .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+  .sidebar { position: fixed; top: 0; left: -260px; width: 260px; height: 100vh; background: var(--surface); border-right: 1px solid var(--border); z-index: 160; transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: var(--shadow-lg); }
+  .sidebar.show { transform: translateX(260px); }
+  .sidebar-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+  .sidebar-header .brand { font-size: 15px; font-weight: 600; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .sidebar-close { background: none; border: none; color: var(--text-soft); font-size: 24px; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; transition: color .2s; }
+  .sidebar-close:hover { color: var(--primary); }
+  .sidebar-nav { padding: 20px 12px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; }
+  .sidebar-nav .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; color: var(--text-soft); text-decoration: none; border-left: 3px solid transparent; border-radius: 0 8px 8px 0; margin-right: 8px; font-size: 14.5px; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .sidebar-nav .nav-item:hover { background: var(--surface-2); color: var(--text); padding-left: 18px; border-left-color: var(--border-strong); }
+  .sidebar-nav .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; border-left-color: var(--primary); }
+  .sidebar-nav .nav-item.active:hover { padding-left: 14px; }
+  .sidebar-nav .nav-item .n { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--muted); }
+  .sidebar-nav .nav-item.active .n { color: var(--primary); }
+  .sidebar-nav .nav-section-title { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin: 14px 0 6px 14px; }
+  .brand-logo-icon { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--primary); color:#fff; border-radius:7px; font-size:14px; }
+  @media (min-width: 1200px) {
+    body { padding-left: 260px; transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    body.sidebar-collapsed { padding-left: 72px; }
+    .sidebar { left: 0; transform: none; box-shadow: none; z-index: 170; width: 260px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
+    body.sidebar-collapsed .sidebar { width: 72px; }
+    body.sidebar-collapsed .sidebar:hover { width: 260px; box-shadow: var(--shadow-lg); }
+    .sidebar-overlay, .sidebar-close { display: none !important; }
+    nav.topbar .brand-mark { cursor: pointer; }
+    
+    /* Fix inner width so content doesn't wrap/squish during transition */
+    .sidebar-header, .sidebar-nav { width: 260px; }
+    
+    /* Collapsed sidebar state adjustments */
+    body.sidebar-collapsed .sidebar .brand-txt,
+    body.sidebar-collapsed .sidebar .nav-item .t,
+    body.sidebar-collapsed .sidebar .nav-section-title {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0s 0.2s;
+    }
+    body.sidebar-collapsed .sidebar .nav-item {
+      padding-left: 25px; /* Shift icon to center of 72px */
+    }
+    body.sidebar-collapsed .sidebar .sidebar-header {
+      padding-left: 22px; /* Shift logo to center of 72px */
+    }
+    
+    /* Hovered Collapsed sidebar state */
+    body.sidebar-collapsed .sidebar:hover .brand-txt,
+    body.sidebar-collapsed .sidebar:hover .nav-item .t,
+    body.sidebar-collapsed .sidebar:hover .nav-section-title {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease 0.1s, visibility 0s 0s;
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item {
+      padding-left: 14px; /* Return to original padding */
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item:hover {
+      padding-left: 18px;
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item.active {
+      padding-left: 14px;
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item.active:hover {
+      padding-left: 14px;
+    }
+    body.sidebar-collapsed .sidebar:hover .sidebar-header {
+      padding-left: 18px; /* Return to original padding */
+    }
+    
+    /* Collapsible brand text on desktop topbar */
+    nav.topbar .brand-txt, nav.topbar .sep { display: none; }
+    body.sidebar-collapsed nav.topbar .brand-txt, body.sidebar-collapsed nav.topbar .sep { display: inline; }
+  }
+</style>
+</head>
+<body>
+<div class="progress-line" id="progress"></div>
+
+<!-- SIDEBAR MENU -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a class="brand" href="index.html">
+      <span class="brand-logo-icon">🧪</span>
+      <span class="brand-txt">CSS Flexbox Lab</span>
+    </a>
+    <button class="sidebar-close" id="sidebarClose" aria-label="ปิดเมนู">&times;</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item home-item"><span class="n">🏠</span> <span class="t">หน้าแรก</span></a>
+    <div class="nav-section-title">Properties</div>
+    <a href="display.html" class="nav-item display-item"><span class="n">01</span> <span class="t">display</span></a>
+    <a href="flex-direction.html" class="nav-item direction-item"><span class="n">02</span> <span class="t">flex-direction</span></a>
+    <a href="flex-wrap.html" class="nav-item wrap-item"><span class="n">03</span> <span class="t">flex-wrap</span></a>
+    <a href="flex-flow.html" class="nav-item flow-item active"><span class="n">04</span> <span class="t">flex-flow</span></a>
+    <a href="justify-content.html" class="nav-item justify-item"><span class="n">05</span> <span class="t">justify-content</span></a>
+    <a href="align-items.html" class="nav-item align-item"><span class="n">06</span> <span class="t">align-items</span></a>
+  </nav>
+</aside>
+
+<nav class="topbar">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">≡</span>
+    <span class="brand-txt">CSS Flexbox Lab</span>
+    <span class="sep">/</span>
+    <span class="prop-name">flex-flow</span>
+  </a>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="themeBtn" aria-label="สลับธีม">
+      <span id="themeIcon">☀️</span>
+      <span id="themeLabel">Dark</span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="eyebrow"><span class="dot"></span>CSS FLEXBOX · PROPERTY LAB · SHORTHAND</div>
+    <h1 class="title"><span class="brace">{</span> <span class="name">flex-flow</span> <span class="brace">}</span></h1>
+    <p class="lede">
+      <b>shorthand 2-in-1</b> ที่รวม <code>flex-direction</code> + <code>flex-wrap</code>
+      ไว้ใน <b>บรรทัดเดียว</b> — ลองทั้ง 12 ค่าผสมในหน้านี้: ลากปรับขนาด ดู wrap ทำงาน
+      ทายค่าผสม แล้วก๊อปปี้โค้ดไปใช้ได้เลย
+    </p>
+    <div class="hero-meta">
+      <span>🎮 <b>6 โซน</b> อินเทอร์แอกทีฟ</span>
+      <span>🔀 <b>4 × 3 = 12</b> ค่าผสม</span>
+      <span>⚡ <b>2 บรรทัด → 1 บรรทัด</b></span>
+    </div>
+  </header>
+
+  <!-- ============ MEGA PLAYGROUND ============ -->
+  <div class="mega">
+    <div class="mega-header">
+      <div class="mega-title"><div class="mega-dots"><span></span><span></span><span></span></div> playground.html</div>
+      <div class="mega-actions">
+        <button class="mega-btn" id="domToggle">🏷️ DOM</button>
+        <button class="mega-btn" id="resetBtn">↺ Reset</button>
+      </div>
+    </div>
+    <div class="mega-body">
+      <div class="mega-stage">
+        <div class="stage-frame" id="stageFrame">
+          <div class="demo" id="megaDemo"></div>
+          <div class="resize-handle" id="resizeHandle" title="ลากเพื่อปรับความกว้าง — ดู wrap ทำงาน"></div>
+          <div class="resize-hint">← ลากเพื่อเห็น wrap</div>
+        </div>
+      </div>
+      <div class="mega-panel">
+        <div class="pg-group">
+          <label>flex-direction <span class="hint">ทิศทาง</span></label>
+          <div class="pg-btns" data-prop="direction">
+            <button data-value="row" class="active">row</button>
+            <button data-value="row-reverse">row-rev</button>
+            <button data-value="column">column</button>
+            <button data-value="column-reverse">col-rev</button>
+          </div>
+        </div>
+        <div class="pg-group">
+          <label>flex-wrap <span class="hint">การแบ่งบรรทัด</span></label>
+          <div class="pg-btns three" data-prop="wrap">
+            <button data-value="nowrap" class="active">nowrap</button>
+            <button data-value="wrap">wrap</button>
+            <button data-value="wrap-reverse">wrap-rev</button>
+          </div>
+        </div>
+        <div class="pg-group">
+          <label>items <span class="hint">จำนวนกล่อง</span></label>
+          <div class="pg-counter">
+            <button id="itemMinus">−</button>
+            <span class="count" id="itemCount">6</span>
+            <button id="itemPlus">+</button>
+          </div>
+        </div>
+        <div class="pg-code" id="megaCode">
+          <button class="copy-btn" id="copyBtn">copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 01: SHORTHAND EXPLAINED ============ -->
+  <section class="block">
+    <div class="section-num">01 ·</div>
+    <h2>ทำไมต้อง <span class="accent">flex-flow</span>? — <span style="font-size:14px;color:var(--muted);font-family:'IBM Plex Mono',monospace">2 บรรทัด → 1 บรรทัด</span></h2>
+    <p class="lead">
+      เพราะ <code>flex-direction</code> กับ <code>flex-wrap</code> เนี่ย <b>แทบจะไปด้วยกันเสมอ</b>
+      เขียนแยก 2 บรรทัดก็ได้ผลเหมือนกัน แต่เสียเวลา — เขียนเป็น <code>flex-flow</code> บรรทัดเดียวจบ ผลลัพธ์เหมือนกันเปี๊ยบ
+    </p>
+
+    <div class="sh-compare">
+      <div class="sh-card long">
+        <span class="sh-tag">แบบเก่า · <b>2 บรรทัด</b></span>
+        <div class="sh-code"><span class="c">.container {</span>
+  <span class="k">display</span><span class="s">:</span> <span class="v">flex</span><span class="s">;</span>
+  <span class="k">flex-direction</span><span class="s">:</span> <span class="v">row</span><span class="s">;</span>
+  <span class="k">flex-wrap</span><span class="s">:</span> <span class="v">wrap</span><span class="s">;</span>
+<span class="c">}</span></div>
+        <div class="sh-preview">
+          <div class="mini" id="shPreviewLong" style="flex-flow: row wrap"><i>1</i><i>2</i><i>3</i><i>4</i></div>
+        </div>
+      </div>
+      <div class="sh-card short">
+        <span class="sh-tag">แบบ shorthand · <b>1 บรรทัด ✓</b></span>
+        <div class="sh-code"><span class="c">.container {</span>
+  <span class="k">display</span><span class="s">:</span> <span class="v">flex</span><span class="s">;</span>
+  <span class="hl-line"><span class="k">flex-flow</span><span class="s">:</span> <span class="v">row</span> <span class="v">wrap</span><span class="s">;</span></span>
+<span class="c">}</span></div>
+        <div class="sh-preview">
+          <div class="mini" id="shPreviewShort" style="flex-flow: row wrap"><i>1</i><i>2</i><i>3</i><i>4</i></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      💡 <b>กฎเดียวที่ต้องจำ:</b> <code>flex-flow</code> = <code>flex-direction</code> + <code>flex-wrap</code>
+      เรียงติดกันในบรรทัดเดียว — ส่วนจะใส่ direction หรือ wrap ก่อนนั้น <b>ไม่สำคัญ</b> (เดี๋ยวพูดในโซน 04)
+    </div>
+  </section>
+
+  <!-- ============ SECTION 02: POPULAR COMBOS ============ -->
+  <section class="block">
+    <div class="section-num">02 ·</div>
+    <h2>ค่ายอดนิยม <span class="accent">4 ค่าผสม</span> — <span style="font-size:14px;color:var(--muted);font-family:'IBM Plex Mono',monospace">คลิกการ์ดเพื่อส่งขึ้น playground ↑</span></h2>
+    <p class="lead">
+      จาก 12 ค่าผสมที่เป็นไปได้ จริงๆ แล้ว <b>ใช้แค่ 4 ค่า</b> นี้ก็ครอบคลุม 95% ของงานจริงแล้ว —
+      ลองคลิกเพื่อส่งขึ้น playground ดูผล
+    </p>
+
+    <div class="values-grid" id="valueCards">
+      <div class="value-card" data-direction="row" data-wrap="wrap">
+        <span class="vc-try">↑ ลองใน playground</span>
+        <div class="vc-head">
+          <span class="vc-name">row wrap</span>
+          <span class="vc-badge">★ ใช้บ่อยสุด</span>
+        </div>
+        <div class="vc-demo"><div class="vc-mini" style="flex-flow: row wrap"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i></div></div>
+        <p class="vc-desc"><b>ราชาแห่ง responsive grid</b> — การ์ดเรียงซ้ายไปขวา เมื่อแคบเกินจะขึ้นบรรทัดใหม่ เหมาะกับ product grid, gallery, card list</p>
+      </div>
+      <div class="value-card" data-direction="column" data-wrap="wrap">
+        <span class="vc-try">↑ ลองใน playground</span>
+        <div class="vc-head">
+          <span class="vc-name">column wrap</span>
+          <span class="vc-badge">เมนูยาว</span>
+        </div>
+        <div class="vc-demo" style="min-height:120px;align-items:stretch"><div class="vc-mini" style="flex-flow: column wrap;height:80px"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i></div></div>
+        <p class="vc-desc">เมนู/ลิสต์ที่เรียง<b>บนลงล่าง</b> เมื่อสูงเกินจะแบ่งเป็นคอลัมน์ใหม่ — เหมาะกับ masonry, vertical chips, tag cloud</p>
+      </div>
+      <div class="value-card" data-direction="row" data-wrap="nowrap">
+        <span class="vc-try">↑ ลองใน playground</span>
+        <div class="vc-head">
+          <span class="vc-name">row nowrap</span>
+          <span class="vc-badge">= default</span>
+        </div>
+        <div class="vc-demo"><div class="vc-mini" style="flex-flow: row nowrap"><i>1</i><i>2</i><i>3</i><i>4</i></div></div>
+        <p class="vc-desc"><b>ค่าเริ่มต้น</b>ของ flex ทั้งหมด — items ยัดกันในบรรทัดเดียว เหมาะกับ toolbar, nav bar, ปุ่มเรียงเส้นเดียว</p>
+      </div>
+      <div class="value-card" data-direction="row-reverse" data-wrap="wrap">
+        <span class="vc-try">↑ ลองใน playground</span>
+        <div class="vc-head">
+          <span class="vc-name">row-reverse wrap</span>
+          <span class="vc-badge">RTL / แปลกใหม่</span>
+        </div>
+        <div class="vc-demo"><div class="vc-mini" style="flex-flow: row-reverse wrap"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i></div></div>
+        <p class="vc-desc">เรียง<b>ขวาไปซ้าย</b> แล้ว wrap — เหมาะกับ RTL layouts (อาหรับ/ฮีบรู) หรือ timeline ย้อนกลับ</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      🎯 <b>ทดลองเลย:</b> หลังคลิกการ์ด ลอง<b>ลากจุดแดง</b>ที่มุมขวาล่างของ playground เพื่อดู wrap / nowrap เปลี่ยนพฤติกรรมตอนเปลี่ยนขนาด
+    </div>
+  </section>
+
+  <!-- ============ SECTION 03: GUESS GAME ============ -->
+  <section class="block">
+    <div class="section-num">03 · 🎮</div>
+    <h2>เกมทายค่าผสม — <span class="accent">Guess the Combo</span></h2>
+    <p class="lead">ดูผลลัพธ์ในกล่อง "เป้าหมาย" แล้วทายว่าใช้ <code>flex-flow</code> ค่าผสมไหน — ทายถูกให้คะแนน!</p>
+
+    <div class="game">
+      <div class="game-head">
+        <h3 style="margin:0">🎯 รอบที่ <span id="roundNum">1</span></h3>
+        <div class="game-score">คะแนน: <b id="scoreNum">0</b>/<span id="totalNum">0</span></div>
+      </div>
+      <p class="game-prompt" id="gamePrompt">กล่องด้านซ้ายคือ "เป้าหมาย" — เลือกคำตอบให้ตรงกับมัน</p>
+
+      <div class="game-target-wrap">
+        <div class="game-box">
+          <div class="game-box-label">🎯 เป้าหมาย</div>
+          <div class="game-stage">
+            <div class="demo" id="gameTarget"></div>
+          </div>
+        </div>
+        <div class="game-box">
+          <div class="game-box-label">✅ คำตอบของคุณ</div>
+          <div class="game-stage">
+            <div class="demo" id="gameUser"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-choices" id="gameChoices">
+        <button data-dir="row" data-wrap="nowrap">row nowrap</button>
+        <button data-dir="row" data-wrap="wrap">row wrap</button>
+        <button data-dir="row-reverse" data-wrap="wrap">row-reverse wrap</button>
+        <button data-dir="column" data-wrap="nowrap">column nowrap</button>
+        <button data-dir="column" data-wrap="wrap">column wrap</button>
+        <button data-dir="column-reverse" data-wrap="nowrap">column-rev nowrap</button>
+      </div>
+
+      <div class="game-feedback" id="gameFeedback"></div>
+      <button class="game-next" id="gameNext">ถัดไป →</button>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 04: ORDER DOESN'T MATTER ============ -->
+  <section class="block">
+    <div class="section-num">04 ·</div>
+    <h2>ลำดับค่า <span class="accent">ไม่สำคัญ</span> 🔁</h2>
+    <p class="lead">
+      ข้อดีอย่างหนึ่งของ shorthand คือ <b>browser ฉลาดพอ</b>ที่จะแยกแยะได้ว่าค่าไหนคือ direction
+      อันไหนคือ wrap — ดังนั้น <code>flex-flow: row wrap</code> กับ <code>flex-flow: wrap row</code> ให้ผล<b>เหมือนกัน</b>
+    </p>
+
+    <div class="order-demo-wrap">
+      <div class="order-controls">
+        <span class="lbl">ลองสลับ:</span>
+        <button data-order="dir-wrap" class="active">flex-flow: row wrap</button>
+        <button data-order="wrap-dir">flex-flow: wrap row</button>
+      </div>
+      <div class="order-stage">
+        <div class="demo" id="orderDemo"></div>
+      </div>
+      <div class="order-code" id="orderCode"></div>
+      <div class="order-note">
+        ✨ <b>แต่ convention จริง:</b> นิยมเขียน <code>direction ก่อน wrap</code> เพราะอ่านแล้วเข้าใจง่ายกว่า
+        (คนคุ้นกับ "ทิศทาง → การแบ่งบรรทัด") แต่เขียนสลับก็ใช้ได้เสมอ
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 05: PITFALLS ============ -->
+  <section class="block">
+    <div class="section-num">05 ·</div>
+    <h2>จุดที่คน <span class="accent">พลาดบ่อย</span> ⚠️</h2>
+
+    <div class="pitfalls">
+      <div class="pitfall">
+        <h4><span class="ic">①</span> ลืมว่าเป็น shorthand — ทำให้ทับค่าเก่า</h4>
+        <p>เพราะ <code>flex-flow</code> คือ shorthand ของทั้งสอง property ถ้าเขียนทีหลัง มันจะ<b>รีเซ็ตค่าที่ไม่ได้ระบุ</b>เป็น default หมด</p>
+        <div class="demo-inline">
+<span class="c">/* อันนี้จะพัง — wrap ถูกรีเซ็ตเป็น nowrap */</span><br>
+<span class="k">flex-wrap</span><span class="s">:</span> <span class="v">wrap</span><span class="s">;</span><br>
+<span class="k">flex-flow</span><span class="s">:</span> <span class="v">row</span><span class="s">;</span> <span class="c">/* ← ทำให้ wrap กลายเป็น nowrap */</span>
+        </div>
+      </div>
+      <div class="pitfall">
+        <h4><span class="ic">②</span> ถ้าใส่ค่าเดียว อีกค่าจะเป็น default</h4>
+        <p>เขียน <code>flex-flow: row</code> อย่างเดียว — browser จะตั้ง <code>flex-wrap</code> เป็น <code>nowrap</code> ให้อัตโนมัติ (เหมือนไม่ได้เขียน) ใช้ค่าเดียวได้ แต่ต้อง<b>รู้ผลลัพธ์</b></p>
+        <div class="demo-inline">
+<span class="c">/* ทั้งสองบรรทัดให้ผลเหมือนกัน */</span><br>
+<span class="k">flex-flow</span><span class="s">:</span> <span class="v">column</span><span class="s">;</span><br>
+<span class="k">flex-flow</span><span class="s">:</span> <span class="v">column</span> <span class="v">nowrap</span><span class="s">;</span>
+        </div>
+      </div>
+      <div class="pitfall">
+        <h4><span class="ic">③</span> order ของค่าไม่สำคัญ แต่ direction ก่อนเข้าใจง่ายกว่า</h4>
+        <p>จริงๆ แล้ว <code>flex-flow: row wrap</code> กับ <code>flex-flow: wrap row</code> ให้ผล<b>เหมือนกัน</b> แต่เขียน direction ก่อนเป็น convention ที่คนอ่านโค้ดเข้าใจง่ายกว่า — เว้นแต่ในทีมมีกฎอื่น ก็ใช้ตามนั้น</p>
+        <div class="demo-inline">
+<span class="c">/* ทั้งสองบรรทัดให้ผลเหมือนกัน ✓ */</span><br>
+<span class="k">flex-flow</span><span class="s">:</span> <span class="v">row</span> <span class="v">wrap</span><span class="s">;</span> &nbsp;<span class="c">← แนะนำ</span><br>
+<span class="k">flex-flow</span><span class="s">:</span> <span class="v">wrap</span> <span class="v">row</span><span class="s">;</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 06: CHEATSHEET ============ -->
+  <section class="block">
+    <div class="section-num">06 ·</div>
+    <h2>Cheatsheet <span class="accent">30 วินาที</span> 📋</h2>
+
+    <div class="cheatsheet">
+      <h3 style="margin-top:0">ตารางค่าผสม <code style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:16px">flex-flow</code> — ทั้ง 12 ค่า</h3>
+      <p style="font-size:14px;color:var(--text-soft);margin:0 0 14px">
+        แถว = <code style="color:var(--primary)">flex-direction</code> · คอลัมน์ = <code style="color:var(--primary)">flex-wrap</code> ·
+        <span style="color:var(--primary)">★</span> = ค่าที่ใช้บ่อย
+      </p>
+
+      <div class="matrix-wrap">
+        <div class="matrix" id="comboMatrix">
+          <div class="mh"></div>
+          <div class="mh">nowrap</div>
+          <div class="mh">wrap <span style="color:var(--primary)">★</span></div>
+          <div class="mh">wrap-reverse</div>
+          <!-- rows injected by JS -->
+        </div>
+      </div>
+
+      <div style="margin-top:24px;padding-top:18px;border-top:1px dashed var(--border)">
+        <p style="margin:0;font-size:14px;color:var(--text-soft)"><b style="color:var(--primary)">จำไว้ 3 ข้อ:</b></p>
+        <ol style="margin:8px 0 0;padding-left:22px;font-size:14px;color:var(--text-soft);line-height:1.8">
+          <li><b>flex-flow</b> = flex-direction + flex-wrap ในบรรทัดเดียว</li>
+          <li><b>เขียนค่าเดียว</b>ได้ — อีกค่าเป็น default (nowrap)</li>
+          <li><b>order ไม่สำคัญ</b> — แต่นิยม direction ก่อน wrap</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="callout">
+      📚 <b>อ่านเพิ่มเติม:</b> ดูรายละเอียดแต่ละ property ได้ที่ <a href="flex-direction.html" style="color:var(--accent)">flex-direction</a>
+      และ <a href="flex-wrap.html" style="color:var(--accent)">flex-wrap</a> — หรือลองตัวถัดไป <code>justify-content</code>
+    </div>
+  </section>
+
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="prev-next">
+      <a href="flex-wrap.html" class="pn prev">
+        <div class="pn-label">ก่อนหน้า</div>
+        <div class="pn-name"><span class="p">flex-wrap</span></div>
+        <p class="pn-desc">ตัวกำหนดว่า items จะบีบ หรือขึ้นบรรทัดใหม่ — ครึ่งหนึ่งของ flex-flow</p>
+      </a>
+      <a href="justify-content.html" class="pn next">
+        <div class="pn-label">ถัดไป</div>
+        <div class="pn-name"><span class="p">justify-content</span></div>
+        <p class="pn-desc">จัด items บน main-axis — start, center, end, space-between...</p>
+      </a>
+    </div>
+    <p class="credit">CSS Flexbox Lab · อ้างอิง <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/flex-flow" target="_blank" rel="noopener">MDN</a> · ทำด้วย ❤️</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast">คัดลอกแล้ว ✓</div>
+
+<script>
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function hl(prop, value) {
+  const vals = value.split(' ').map(v => `<span class="v">${v}</span>`).join(' ');
+  return `<span class="k">${prop}</span><span class="s">:</span> ${vals}<span class="s">;</span>`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e2) {}
+    document.body.removeChild(ta);
+    return true;
+  }
+}
+
+/* ============================================================
+   MEGA PLAYGROUND STATE
+   ============================================================ */
+const state = {
+  direction: 'row',
+  wrap: 'nowrap',
+  itemCount: 6,
+  showDom: false,
+};
+
+const megaDemo = document.getElementById('megaDemo');
+const megaCode = document.getElementById('megaCode');
+
+function renderMega() {
+  // apply flex-flow as a SINGLE line — both via style.flexFlow
+  megaDemo.style.flexFlow = `${state.direction} ${state.wrap}`;
+
+  // items
+  const existing = megaDemo.querySelectorAll('.item');
+  const want = state.itemCount;
+  if (existing.length < want) {
+    for (let i = existing.length; i < want; i++) {
+      const it = document.createElement('div');
+      it.className = 'item';
+      it.dataset.dom = i + 1;
+      it.textContent = i + 1;
+      megaDemo.appendChild(it);
+    }
+  } else if (existing.length > want) {
+    for (let i = existing.length - 1; i >= want; i--) existing[i].remove();
+  }
+
+  // toggles
+  megaDemo.classList.toggle('show-dom', state.showDom);
+
+  // sync button states
+  document.querySelectorAll('.pg-btns').forEach(group => {
+    const prop = group.dataset.prop;
+    group.querySelectorAll('button').forEach(b => {
+      b.classList.toggle('active', b.dataset.value === state[prop]);
+    });
+  });
+
+  // code: highlight flex-flow as ONE line
+  const flowVal = `${state.direction} ${state.wrap}`;
+  const codeText =
+`.container {
+  display: flex;
+  flex-flow: ${flowVal};
+}`;
+  megaCode.innerHTML =
+    '<button class="copy-btn" id="copyBtn">copy</button>' +
+    `<span class="c">.container {</span>\n` +
+    `  <span class="k">display</span><span class="s">:</span> <span class="v">flex</span><span class="s">;</span>\n` +
+    `  <span class="hl-line">${hl('flex-flow', flowVal)}</span>\n` +
+    `<span class="c">}</span>`;
+  megaCode._text = codeText;
+
+  // re-bind copy
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    await copyText(codeText);
+    const b = document.getElementById('copyBtn');
+    b.textContent = '✓ copied'; b.classList.add('copied');
+    showToast('คัดลอกโค้ดแล้ว ✓');
+    setTimeout(() => { b.textContent = 'copy'; b.classList.remove('copied'); }, 1500);
+  });
+
+  // item counter
+  document.getElementById('itemCount').textContent = state.itemCount;
+  document.getElementById('itemMinus').disabled = state.itemCount <= 1;
+  document.getElementById('itemPlus').disabled = state.itemCount >= 12;
+
+  // sync combo cards
+  document.querySelectorAll('.value-card').forEach(c => {
+    c.classList.toggle('selected',
+      c.dataset.direction === state.direction && c.dataset.wrap === state.wrap);
+  });
+}
+
+// bind property buttons
+document.querySelectorAll('.pg-btns').forEach(group => {
+  const prop = group.dataset.prop;
+  group.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    state[prop] = btn.dataset.value;
+    renderMega();
+  });
+});
+
+// counter
+document.getElementById('itemMinus').addEventListener('click', () => {
+  if (state.itemCount > 1) { state.itemCount--; renderMega(); }
+});
+document.getElementById('itemPlus').addEventListener('click', () => {
+  if (state.itemCount < 12) { state.itemCount++; renderMega(); }
+});
+
+// toggles
+document.getElementById('domToggle').addEventListener('click', e => {
+  state.showDom = !state.showDom;
+  e.target.classList.toggle('active', state.showDom);
+  renderMega();
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  Object.assign(state, { direction: 'row', wrap: 'nowrap', itemCount: 6, showDom: false });
+  document.getElementById('domToggle').classList.remove('active');
+  document.getElementById('stageFrame').style.setProperty('--stage-w', '380px');
+  renderMega();
+  showToast('รีเซ็ตแล้ว ↺');
+});
+
+// resize handle (drag to change width — critical for seeing wrap)
+(() => {
+  const handle = document.getElementById('resizeHandle');
+  const frame = document.getElementById('stageFrame');
+  let dragging = false, startX = 0, startW = 380;
+  handle.addEventListener('pointerdown', e => {
+    dragging = true; startX = e.clientX;
+    const cur = frame.style.getPropertyValue('--stage-w');
+    startW = cur ? parseInt(cur) : 380;
+    handle.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  handle.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const newW = Math.max(150, Math.min(560, startW + dx));
+    frame.style.setProperty('--stage-w', newW + 'px');
+  });
+  handle.addEventListener('pointerup', e => { dragging = false; handle.releasePointerCapture(e.pointerId); });
+})();
+
+renderMega();
+
+/* ============================================================
+   COMBO CARDS → push to playground
+   ============================================================ */
+document.querySelectorAll('.value-card').forEach(card => {
+  card.addEventListener('click', () => {
+    state.direction = card.dataset.direction;
+    state.wrap = card.dataset.wrap;
+    renderMega();
+    window.scrollTo({ top: document.querySelector('.mega').offsetTop - 80, behavior: 'smooth' });
+    showToast(`ส่ง "${state.direction} ${state.wrap}" ขึ้น playground ↑`);
+  });
+});
+
+/* ============================================================
+   GUESS GAME
+   ============================================================ */
+const COMBOS = [
+  { dir: 'row', wrap: 'nowrap' },
+  { dir: 'row', wrap: 'wrap' },
+  { dir: 'row-reverse', wrap: 'wrap' },
+  { dir: 'column', wrap: 'nowrap' },
+  { dir: 'column', wrap: 'wrap' },
+  { dir: 'column-reverse', wrap: 'nowrap' },
+];
+const game = {
+  round: 1,
+  score: 0,
+  total: 0,
+  target: COMBOS[0],
+  answered: false,
+};
+
+const gameTarget = document.getElementById('gameTarget');
+const gameUser = document.getElementById('gameUser');
+const gameFeedback = document.getElementById('gameFeedback');
+const gameNext = document.getElementById('gameNext');
+const gameChoices = document.getElementById('gameChoices');
+
+function makeItems(container, n) {
+  container.innerHTML = '';
+  for (let i = 1; i <= n; i++) {
+    const it = document.createElement('div');
+    it.className = 'item';
+    it.textContent = i;
+    container.appendChild(it);
+  }
+}
+
+function newRound() {
+  game.answered = false;
+  game.target = COMBOS[Math.floor(Math.random() * COMBOS.length)];
+  const n = 5 + Math.floor(Math.random() * 3); // 5-7 items to show wrap effects
+  gameTarget.style.flexFlow = `${game.target.dir} ${game.target.wrap}`;
+  gameUser.style.flexFlow = 'row nowrap';
+  makeItems(gameTarget, n);
+  makeItems(gameUser, n);
+  gameFeedback.classList.remove('show', 'win', 'lose');
+  gameNext.classList.remove('show');
+  gameChoices.querySelectorAll('button').forEach(b => {
+    b.disabled = false;
+    b.classList.remove('correct', 'wrong');
+  });
+  document.getElementById('roundNum').textContent = game.round;
+}
+
+gameChoices.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn || game.answered) return;
+  game.answered = true;
+  game.total++;
+  const dir = btn.dataset.dir;
+  const wrap = btn.dataset.wrap;
+  gameUser.style.flexFlow = `${dir} ${wrap}`;
+
+  gameChoices.querySelectorAll('button').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.dir === game.target.dir && b.dataset.wrap === game.target.wrap) b.classList.add('correct');
+  });
+
+  const targetLabel = `${game.target.dir} ${game.target.wrap}`;
+  const userLabel = `${dir} ${wrap}`;
+  if (dir === game.target.dir && wrap === game.target.wrap) {
+    game.score++;
+    gameFeedback.textContent = `✓ ถูกต้อง! เป้าหมายคือ flex-flow: ${targetLabel} — เก่งมาก!`;
+    gameFeedback.className = 'game-feedback win show';
+  } else {
+    btn.classList.add('wrong');
+    gameFeedback.textContent = `✗ ยังไม่ถูก — เป้าหมายคือ flex-flow: ${targetLabel} (คุณเลือก ${userLabel})`;
+    gameFeedback.className = 'game-feedback lose show';
+  }
+  document.getElementById('scoreNum').textContent = game.score;
+  document.getElementById('totalNum').textContent = game.total;
+  gameNext.classList.add('show');
+});
+
+gameNext.addEventListener('click', () => { game.round++; newRound(); });
+newRound();
+
+/* ============================================================
+   ORDER DEMO (Section 04) — order doesn't matter
+   ============================================================ */
+const orderDemo = document.getElementById('orderDemo');
+const orderCode = document.getElementById('orderCode');
+
+function renderOrder(order) {
+  // Both produce identical layout — only the code text differs
+  const flowVal = order === 'dir-wrap' ? 'row wrap' : 'wrap row';
+  orderDemo.style.flexFlow = flowVal;
+  // populate items once
+  if (orderDemo.children.length === 0) {
+    for (let i = 1; i <= 6; i++) {
+      const it = document.createElement('div');
+      it.className = 'item';
+      it.textContent = i;
+      orderDemo.appendChild(it);
+    }
+  }
+  orderCode.innerHTML =
+    `<span class="c">.container {</span>\n` +
+    `  <span class="k">display</span><span class="s">:</span> <span class="v">flex</span><span class="s">;</span>\n` +
+    `  ${hl('flex-flow', flowVal)}\n` +
+    `<span class="c">}</span>`;
+}
+
+document.querySelectorAll('.order-controls button[data-order]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.order-controls button[data-order]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderOrder(btn.dataset.order);
+  });
+});
+renderOrder('dir-wrap');
+
+/* ============================================================
+   CHEATSHEET MATRIX (Section 06)
+   ============================================================ */
+const DIRECTIONS = ['row', 'row-reverse', 'column', 'column-reverse'];
+const WRAPS = ['nowrap', 'wrap', 'wrap-reverse'];
+const POPULAR = new Set(['row wrap', 'column wrap', 'row nowrap', 'row-reverse wrap']);
+
+const matrix = document.getElementById('comboMatrix');
+DIRECTIONS.forEach(dir => {
+  // row label
+  const mr = document.createElement('div');
+  mr.className = 'mr';
+  mr.textContent = dir;
+  matrix.appendChild(mr);
+  WRAPS.forEach(wrap => {
+    const combo = `${dir} ${wrap}`;
+    const isPop = POPULAR.has(combo);
+    const cell = document.createElement('div');
+    cell.className = 'mc' + (isPop ? ' popular star' : '');
+    cell.title = combo + (isPop ? ' ★ ใช้บ่อย' : '');
+    // build mini demo — 6 items
+    let demoStyle = `flex-flow: ${combo};`;
+    let items = '<i></i><i></i><i></i><i></i><i></i><i></i>';
+    cell.innerHTML =
+      `<div class="mc-demo" style="${demoStyle}">${items}</div>` +
+      `<div class="mc-code">${dir}<br>${wrap}</div>` +
+      (isPop ? '<div style="font-size:9px;color:var(--primary);font-weight:600">★</div>' : '');
+    cell.style.cursor = 'pointer';
+    cell.addEventListener('click', () => {
+      state.direction = dir;
+      state.wrap = wrap;
+      renderMega();
+      window.scrollTo({ top: document.querySelector('.mega').offsetTop - 80, behavior: 'smooth' });
+      showToast(`ส่ง "${combo}" ขึ้น playground ↑`);
+    });
+    matrix.appendChild(cell);
+  });
+});
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+const themeBtn = document.getElementById('themeBtn');
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeIcon').textContent = theme === 'dark' ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = theme === 'dark' ? 'Light' : 'Dark';
+  try { localStorage.setItem('flexlab-theme', theme); } catch (e) {}
+}
+let saved = 'light';
+try { saved = localStorage.getItem('flexlab-theme') || 'light'; } catch (e) {}
+applyTheme(saved);
+themeBtn.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+});
+
+/* ============================================================
+   SCROLL PROGRESS
+   ============================================================ */
+const progress = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  progress.style.width = pct + '%';
+}, { passive: true });
+
+/* ============ SIDEBAR MENU TOGGLE ============ */
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const sidebarClose = document.getElementById('sidebarClose');
+const brandMark = document.querySelector('.brand-mark');
+
+if (brandMark) {
+  brandMark.addEventListener('click', e => {
+    e.preventDefault();
+    if (window.innerWidth >= 1200) {
+      document.body.classList.toggle('sidebar-collapsed');
+    } else {
+      sidebar.classList.add('show');
+      sidebarOverlay.classList.add('show');
+    }
+  });
+}
+if (sidebarClose) {
+  sidebarClose.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    sidebarOverlay.classList.remove('show');
+  });
+}
+if (sidebarOverlay) {
+  sidebarOverlay.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    sidebarOverlay.classList.remove('show');
+  });
+}
+</script>
+</body>
+</html>

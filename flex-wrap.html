@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>flex-wrap Lab — เล่นได้จริง · CSS Flexbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============ THEME TOKENS ============ */
+  :root {
+    --bg: #faf9f6;
+    --bg-soft: #f1efe9;
+    --surface: #ffffff;
+    --surface-2: #f7f5f0;
+    --text: #1a1a1a;
+    --text-soft: #555;
+    --muted: #888;
+    --border: #e4e1d8;
+    --border-strong: #d4cfc2;
+    --primary: #c8412d;
+    --primary-soft: #fde8e4;
+    --accent: #1f6feb;
+    --accent-soft: #e3edff;
+    --ok: #1a7f5a;
+    --ok-soft: #d8f3e7;
+    --warn: #b8731a;
+    --warn-soft: #fcefd6;
+    --demo-bg: #ffffff;
+    --demo-border: #e4e1d8;
+    --code-bg: #f6f3ec;
+    --code-text: #2a2a2a;
+    --code-k: #c8412d;
+    --code-v: #1f6feb;
+    --code-c: #8a8578;
+    --code-s: #b8731a;
+    --item-a: #c8412d;
+    --item-b: #1f6feb;
+    --item-c: #555;
+    --item-d: #b8731a;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.05);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,.06), 0 20px 40px rgba(0,0,0,.08);
+  }
+  [data-theme="dark"] {
+    --bg: #131520;
+    --bg-soft: #1a1d2e;
+    --surface: #1e2236;
+    --surface-2: #232848;
+    --text: #e8ebff;
+    --text-soft: #b4b9d6;
+    --muted: #7e85a8;
+    --border: #2d3160;
+    --border-strong: #3d4280;
+    --primary: #ff6b54;
+    --primary-soft: #3a1d1a;
+    --accent: #5ea8ff;
+    --accent-soft: #1a2748;
+    --ok: #4dd6a8;
+    --ok-soft: #16321f;
+    --warn: #f0b860;
+    --warn-soft: #3a2a0e;
+    --demo-bg: #0c0f1e;
+    --demo-border: #2d3160;
+    --code-bg: #0c0f1e;
+    --code-text: #d7def7;
+    --code-k: #ff8aaf;
+    --code-v: #8be9fd;
+    --code-c: #6b7394;
+    --code-s: #f1fa8c;
+    --item-a: #ff6b54;
+    --item-b: #5ea8ff;
+    --item-c: #b4b9d6;
+    --item-d: #f0b860;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.3);
+    --shadow-lg: 0 4px 12px rgba(0,0,0,.3), 0 20px 40px rgba(0,0,0,.4);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    font-family: "IBM Plex Sans Thai", "Mitr", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    font-size: 17px;
+    transition: background .3s ease, color .3s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ============ NAV ============ */
+  nav.topbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+  }
+  .brand { display:flex; align-items:center; gap:10px; font-family:"Mitr",sans-serif; font-weight:600; font-size:15px; color:var(--text); text-decoration:none; letter-spacing:.3px; }
+  .brand-mark { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--primary); color:#fff; border-radius:7px; font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:600; }
+  .brand .sep { color:var(--muted); font-weight:400; }
+  .brand .prop-name { color:var(--primary); font-family:"IBM Plex Mono",monospace; font-size:14px; }
+  .nav-actions { display:flex; align-items:center; gap:12px; }
+  .theme-toggle { display:inline-flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--border); color:var(--text-soft); padding:7px 12px; border-radius:999px; cursor:pointer; font-family:inherit; font-size:13px; transition:all .2s ease; }
+  .theme-toggle:hover { border-color:var(--primary); color:var(--text); }
+
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 24px; }
+
+  /* ============ HERO ============ */
+  header.hero { padding: 60px 0 30px; text-align: center; }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:var(--primary); background:var(--primary-soft); padding:6px 14px; border-radius:999px; margin-bottom:24px; }
+  .eyebrow .dot { width:6px; height:6px; background:var(--primary); border-radius:50%; }
+  h1.title { font-family:"IBM Plex Mono",monospace; font-size:clamp(38px,8vw,68px); font-weight:600; margin:0 0 18px; line-height:1.05; letter-spacing:-1.5px; }
+  h1.title .brace { color:var(--muted); font-weight:400; }
+  h1.title .name { color:var(--primary); }
+  .lede { font-size:20px; color:var(--text-soft); max-width:640px; margin:0 auto; line-height:1.55; font-weight:300; }
+  .lede b { color:var(--text); font-weight:600; }
+  .lede code, p code, li code { font-family:"IBM Plex Mono",monospace; font-size:.86em; background:var(--surface-2); border:1px solid var(--border); padding:2px 7px; border-radius:5px; color:var(--primary); }
+  .hero-meta { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin-top:28px; font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted); }
+  .hero-meta b { color:var(--text-soft); font-weight:500; }
+
+  /* ============ MEGA PLAYGROUND ============ */
+  .mega {
+    margin: 40px 0 60px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .mega-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 18px; border-bottom:1px solid var(--border); background:var(--surface-2);
+  }
+  .mega-title { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; display:flex; align-items:center; gap:8px; }
+  .mega-dots { display:flex; gap:6px; }
+  .mega-dots span { width:10px; height:10px; border-radius:50%; background:var(--border-strong); }
+  .mega-actions { display:flex; gap:8px; }
+  .mega-btn {
+    font-family:"IBM Plex Mono",monospace; font-size:12px;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--text-soft); padding:6px 11px; border-radius:7px; cursor:pointer;
+    transition:all .15s ease; display:inline-flex; align-items:center; gap:5px;
+  }
+  .mega-btn:hover { border-color:var(--primary); color:var(--text); }
+  .mega-btn.active { background:var(--primary); color:#fff; border-color:var(--primary); }
+
+  .mega-body { display:grid; grid-template-columns:1fr; }
+  @media (min-width: 760px) { .mega-body { grid-template-columns: 1fr 300px; } }
+
+  .mega-stage {
+    position: relative;
+    padding: 28px;
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 24px 24px,
+      var(--demo-bg);
+    border-right: 1px solid var(--border);
+    min-height: 360px;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  [data-theme="dark"] .mega-stage {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 24px 24px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 24px 24px,
+      var(--demo-bg);
+  }
+
+  .stage-frame {
+    position: relative;
+    width: 100%;
+    max-width: var(--stage-w, 420px);
+    transition: max-width .05s linear;
+  }
+  .stage-frame .resize-handle {
+    position: absolute;
+    right: -7px; bottom: -7px;
+    width: 16px; height: 16px;
+    background: var(--primary);
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    cursor: ew-resize;
+    z-index: 5;
+    box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  }
+  .stage-frame .resize-hint {
+    position: absolute;
+    right: -2px; bottom: -28px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .stage-frame .width-readout {
+    position: absolute;
+    left: -2px; bottom: -28px;
+    font-family:"IBM Plex Mono",monospace;
+    font-size: 10px;
+    color: var(--primary);
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .demo {
+    display: flex;
+    gap: 10px;
+    min-height: 200px;
+    transition: flex-wrap .35s cubic-bezier(.4,0,.2,1);
+    border: 2px dashed transparent;
+    border-radius: 8px;
+  }
+  .demo .item {
+    flex: 0 0 auto;
+    min-width: 56px; min-height: 56px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 9px; color:#fff;
+    font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:17px;
+    box-shadow: var(--shadow);
+    position: relative;
+    transition: all .35s cubic-bezier(.4,0,.2,1);
+  }
+  .demo .item:nth-child(4n+1) { background: var(--item-a); }
+  .demo .item:nth-child(4n+2) { background: var(--item-b); }
+  .demo .item:nth-child(4n+3) { background: var(--item-c); }
+  .demo .item:nth-child(4n+4) { background: var(--item-d); }
+
+  .mega-panel {
+    padding: 18px;
+    display: flex; flex-direction: column; gap: 14px;
+    background: var(--surface);
+  }
+  .pg-group label {
+    font-family:"IBM Plex Mono",monospace; font-size:11px;
+    text-transform:uppercase; letter-spacing:1px;
+    color:var(--muted); display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 6px;
+  }
+  .pg-group label .hint { color: var(--primary); text-transform:none; letter-spacing:0; font-size:10px; }
+  .pg-btns { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+  .pg-btns.three { grid-template-columns: 1fr 1fr 1fr; }
+  .pg-btns button {
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px;
+    padding:8px 6px; border:1px solid var(--border);
+    background:var(--surface-2); color:var(--text-soft);
+    border-radius:6px; cursor:pointer; transition:all .15s ease;
+  }
+  .pg-btns button:hover { border-color:var(--primary); color:var(--text); }
+  .pg-btns button.active {
+    background:var(--primary); color:#fff; border-color:var(--primary);
+    box-shadow:0 2px 8px color-mix(in srgb, var(--primary) 40%, transparent);
+  }
+
+  .pg-counter { display:flex; align-items:center; gap:10px; }
+  .pg-counter button {
+    width:30px; height:30px; border-radius:7px;
+    border:1px solid var(--border); background:var(--surface-2);
+    color:var(--text); font-size:16px; cursor:pointer; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .15s ease;
+  }
+  .pg-counter button:hover { border-color:var(--primary); }
+  .pg-counter button:disabled { opacity:.3; cursor:not-allowed; }
+  .pg-counter .count { font-family:"IBM Plex Mono",monospace; font-size:14px; color:var(--text); min-width:24px; text-align:center; }
+
+  .pg-code {
+    background:var(--code-bg); border:1px solid var(--border);
+    border-radius:8px; padding:12px;
+    font-family:"IBM Plex Mono",monospace; font-size:12px;
+    color:var(--code-text); line-height:1.75; overflow-x:auto;
+    position: relative;
+  }
+  .pg-code .k { color:var(--code-k); }
+  .pg-code .v { color:var(--code-v); }
+  .pg-code .s { color:var(--code-s); }
+  .pg-code .c { color:var(--code-c); font-style:italic; }
+  .copy-btn {
+    position: absolute; top:8px; right:8px;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--text-soft); padding:4px 9px; border-radius:5px;
+    font-family:"IBM Plex Mono",monospace; font-size:11px;
+    cursor:pointer; transition:all .15s ease;
+  }
+  .copy-btn:hover { border-color:var(--primary); color:var(--primary); }
+  .copy-btn.copied { background:var(--ok); color:#fff; border-color:var(--ok); }
+
+  /* ============ SECTIONS ============ */
+  section.block { padding: 56px 0; border-top: 1px solid var(--border); }
+  section.block:first-of-type { border-top: none; }
+  .section-num { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--primary); margin-bottom:8px; letter-spacing:1px; }
+  h2 { font-family:"Mitr",sans-serif; font-size:clamp(26px,4.5vw,36px); font-weight:600; margin:0 0 18px; line-height:1.2; letter-spacing:-.3px; }
+  h2 .accent { color:var(--primary); }
+  h3 { font-family:"Mitr",sans-serif; font-size:20px; font-weight:600; margin:32px 0 12px; }
+  p.lead { font-size:18px; color:var(--text-soft); line-height:1.75; margin:0 0 18px; }
+  p.lead b, p b { color:var(--text); font-weight:600; }
+
+  /* ============ VALUE CARDS (clickable) ============ */
+  .values-grid { display:grid; grid-template-columns:1fr; gap:14px; margin:24px 0; }
+  @media (min-width: 680px) { .values-grid { grid-template-columns:1fr 1fr 1fr; } }
+  .value-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:18px; box-shadow:var(--shadow);
+    cursor:pointer; transition:all .2s ease;
+    position: relative;
+  }
+  .value-card:hover { border-color:var(--primary); transform:translateY(-2px); box-shadow:var(--shadow-lg); }
+  .value-card.selected { border-color:var(--primary); background:linear-gradient(180deg,var(--primary-soft),var(--surface)); }
+  .value-card .vc-try {
+    position:absolute; top:14px; right:14px;
+    font-family:"IBM Plex Mono",monospace; font-size:10px;
+    color:var(--primary); opacity:0; transition:opacity .2s;
+  }
+  .value-card:hover .vc-try { opacity:1; }
+  .value-card .vc-head { display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px; }
+  .value-card .vc-name { font-family:"IBM Plex Mono",monospace; font-size:15px; color:var(--primary); font-weight:600; }
+  .value-card .vc-arrow { font-family:"IBM Plex Mono",monospace; font-size:18px; color:var(--muted); }
+  .value-card .vc-demo {
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 16px 16px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 16px 16px,
+      var(--demo-bg);
+    border-radius:8px; padding:12px; min-height:110px; margin-bottom:10px; display:flex;
+  }
+  [data-theme="dark"] .value-card .vc-demo {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 16px 16px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 16px 16px,
+      var(--demo-bg);
+  }
+  .vc-mini { display:flex; gap:5px; transition:all .3s ease; width:100%; align-content:flex-start; flex-wrap:nowrap; }
+  .vc-mini i {
+    flex:0 0 auto; min-width:22px; height:22px;
+    background:var(--item-a); color:#fff; border-radius:5px;
+    font-family:"IBM Plex Mono",monospace; font-style:normal; font-size:10px; font-weight:600;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .vc-mini i:nth-child(2) { background:var(--item-b); }
+  .vc-mini i:nth-child(3) { background:var(--item-c); }
+  .vc-mini i:nth-child(4) { background:var(--item-d); }
+  .vc-mini i:nth-child(5) { background:var(--item-a); }
+  .vc-mini i:nth-child(6) { background:var(--item-b); }
+  .vc-mini i:nth-child(7) { background:var(--item-c); }
+  .value-card .vc-desc { font-size:13.5px; color:var(--text-soft); margin:0; line-height:1.6; }
+
+  /* ============ COMPARISON (nowrap vs wrap) ============ */
+  .compare-wrap { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; margin:24px 0; box-shadow:var(--shadow); }
+  .compare-grid { display:grid; grid-template-columns:1fr; gap:18px; }
+  @media (min-width: 700px) { .compare-grid { grid-template-columns: 1fr 1fr; } }
+  .compare-col { display:flex; flex-direction:column; }
+  .compare-tag { display:inline-flex; align-items:center; gap:6px; font-family:"IBM Plex Mono",monospace; font-size:12px; padding:5px 11px; border-radius:999px; align-self:flex-start; margin-bottom:10px; }
+  .compare-tag.nowrap { background:var(--warn-soft); color:var(--warn); }
+  .compare-tag.wrap { background:var(--ok-soft); color:var(--ok); }
+  .compare-stage {
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+    border:1px solid var(--border); border-radius:10px;
+    padding:14px; min-height:170px; display:flex;
+    overflow: hidden;
+  }
+  [data-theme="dark"] .compare-stage {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+  }
+  .compare-stage .demo { flex:1; min-height:130px; }
+  .compare-note { margin-top:10px; font-size:13.5px; color:var(--text-soft); line-height:1.6; }
+  .compare-note b { color:var(--text); }
+  .compare-controls { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:18px; }
+  .compare-controls .lbl { font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; }
+  .compare-slider { flex:1; min-width:200px; display:flex; align-items:center; gap:10px; }
+  .compare-slider input[type=range] { flex:1; accent-color: var(--primary); }
+  .compare-slider .width-val { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--primary); font-weight:600; min-width:60px; text-align:right; }
+
+  /* ============ GAME ============ */
+  .game {
+    background: linear-gradient(135deg, var(--accent-soft), var(--surface));
+    border:1px solid var(--border); border-radius:16px;
+    padding:24px; margin:24px 0; box-shadow:var(--shadow);
+  }
+  .game-head { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; }
+  .game-head h3 { margin:0; }
+  .game-score { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--text-soft); background:var(--surface); padding:6px 12px; border-radius:999px; border:1px solid var(--border); }
+  .game-score b { color:var(--ok); }
+  .game-prompt { font-size:15px; color:var(--text-soft); margin:0 0 14px; }
+  .game-prompt b { color:var(--text); }
+  .game-target-wrap { display:grid; grid-template-columns:1fr; gap:14px; }
+  @media (min-width: 680px) { .game-target-wrap { grid-template-columns:1fr 1fr; } }
+  .game-box { }
+  .game-box-label { font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+  .game-stage {
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+    border:1px solid var(--border); border-radius:10px;
+    padding:16px; min-height:140px; display:flex;
+  }
+  [data-theme="dark"] .game-stage {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+  }
+  .game-stage .demo { min-height:100px; flex:1; }
+  .game-choices { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:14px; }
+  .game-choices button {
+    font-family:"IBM Plex Mono",monospace; font-size:13px;
+    padding:11px 6px; border:2px solid var(--border);
+    background:var(--surface); color:var(--text-soft);
+    border-radius:8px; cursor:pointer; transition:all .15s;
+  }
+  .game-choices button:hover:not(:disabled) { border-color:var(--primary); color:var(--text); }
+  .game-choices button.correct { background:var(--ok); color:#fff; border-color:var(--ok); }
+  .game-choices button.wrong { background:var(--primary); color:#fff; border-color:var(--primary); }
+  .game-choices button:disabled { cursor:not-allowed; opacity:.7; }
+  .game-feedback { margin-top:14px; padding:12px 14px; border-radius:8px; font-size:14px; display:none; }
+  .game-feedback.show { display:block; }
+  .game-feedback.win { background:var(--ok-soft); color:var(--ok); border-left:3px solid var(--ok); }
+  .game-feedback.lose { background:var(--primary-soft); color:var(--primary); border-left:3px solid var(--primary); }
+  .game-next { margin-top:12px; font-family:"IBM Plex Mono",monospace; font-size:13px; background:var(--primary); color:#fff; border:none; padding:9px 16px; border-radius:8px; cursor:pointer; display:none; }
+  .game-next.show { display:inline-block; }
+
+  /* ============ SCENARIOS ============ */
+  .scenarios { display:grid; grid-template-columns:1fr; gap:14px; margin:24px 0; }
+  @media (min-width: 680px) { .scenarios { grid-template-columns: repeat(4, 1fr); } }
+  .scn-btn {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:14px 10px; cursor:pointer;
+    transition:all .2s ease; text-align:center;
+    font-family:inherit;
+  }
+  .scn-btn:hover { border-color:var(--primary); transform:translateY(-2px); }
+  .scn-btn.active { background:linear-gradient(180deg,var(--primary-soft),var(--surface)); border-color:var(--primary); }
+  .scn-btn .ic { font-size:24px; display:block; margin-bottom:6px; }
+  .scn-btn .nm { font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--text-soft); }
+  .scn-btn.active .nm { color:var(--primary); font-weight:600; }
+
+  .scn-detail {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:20px; margin-top:14px;
+    box-shadow:var(--shadow);
+  }
+  .scn-detail .scn-head { display:flex; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap; }
+  .scn-detail .scn-head .ic { font-size:28px; }
+  .scn-detail .scn-head h4 { margin:0; font-family:"Mitr",sans-serif; font-size:18px; }
+  .scn-detail .scn-head .val { font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--primary); background:var(--primary-soft); padding:3px 9px; border-radius:5px; margin-left:auto; }
+  .scn-detail p { margin:0 0 14px; font-size:15px; color:var(--text-soft); }
+  .scn-detail .scn-stage {
+    background:
+      linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+    border:1px solid var(--border); border-radius:10px;
+    padding:16px; min-height:140px; display:flex;
+  }
+  [data-theme="dark"] .scn-detail .scn-stage {
+    background:
+      linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--demo-bg);
+  }
+  .scn-detail .scn-stage .demo { min-height:100px; flex:1; }
+
+  /* tag/chip styling inside demos */
+  .scn-tags { gap:6px; align-content:flex-start; align-items:flex-start; }
+  .scn-tags .tag { padding:5px 12px; border-radius:999px; font-size:13px; background:var(--surface-2); color:var(--text); border:1px solid var(--border); }
+
+  /* gallery styling */
+  .scn-gallery { gap:8px; align-content:flex-start; }
+  .scn-gallery .tile { width:70px; height:55px; border-radius:8px; background:linear-gradient(135deg,var(--item-a),var(--item-b)); color:#fff; display:flex; align-items:center; justify-content:center; font-family:"IBM Plex Mono",monospace; font-size:14px; font-weight:600; }
+
+  /* toolbar buttons */
+  .scn-toolbar { gap:6px; align-items:center; }
+  .scn-toolbar .tbtn { padding:7px 11px; border-radius:8px; background:var(--surface-2); border:1px solid var(--border); font-size:13px; color:var(--text); }
+  .scn-toolbar .sep { width:1px; height:26px; background:var(--border); align-self:center; }
+
+  /* ============ PITFALLS ============ */
+  .pitfalls { margin:24px 0; display:flex; flex-direction:column; gap:14px; }
+  .pitfall { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--warn); border-radius:10px; padding:16px 18px; box-shadow:var(--shadow); }
+  .pitfall h4 { margin:0 0 6px; font-family:"Mitr",sans-serif; font-size:16px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .pitfall h4 .ic { color:var(--warn); }
+  .pitfall p { margin:0; font-size:15px; color:var(--text-soft); line-height:1.65; }
+
+  /* ============ CHEATSHEET ============ */
+  .cheatsheet { background:linear-gradient(135deg,var(--primary-soft),var(--surface)); border:1px solid var(--border); border-radius:16px; padding:28px; margin:24px 0; box-shadow:var(--shadow); }
+  .cheatsheet h3 { margin-top:0; }
+  .cheat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 18px 0 24px; }
+  .cheat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; transition: all .2s ease; cursor: pointer; display: flex; flex-direction: column; }
+  .cheat-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .cheat-card .cc-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+  .cheat-card .cc-val { font-family: "IBM Plex Mono", monospace; color: var(--primary); font-size: 15px; font-weight: 600; }
+  .cheat-card .cc-tag { font-size: 11px; color: var(--text-soft); background: var(--surface-2); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); white-space: nowrap; }
+  .cheat-card .cc-demo {
+    background: linear-gradient(var(--demo-border) 1px, transparent 1px) 0 0 / 12px 12px, linear-gradient(90deg, var(--demo-border) 1px, transparent 1px) 0 0 / 12px 12px, var(--demo-bg);
+    border-radius: 6px; height: 50px; display: flex; gap: 4px; padding: 6px; margin-bottom: 12px;
+  }
+  [data-theme="dark"] .cheat-card .cc-demo { background: linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 12px 12px, linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px) 0 0 / 12px 12px, var(--demo-bg); }
+  .cheat-card .cc-demo .cci { flex: 0 0 16px; height: 16px; background: var(--item-a); border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: "IBM Plex Mono", monospace; font-size: 9px; color: #fff; font-weight: bold; }
+  .cheat-card .cc-demo .cci:nth-child(2) { background: var(--item-b); }
+  .cheat-card .cc-demo .cci:nth-child(3) { background: var(--item-c); }
+  .cheat-card .cc-demo .cci:nth-child(4) { background: var(--item-d); }
+  .cheat-card .cc-desc { font-size: 13px; color: var(--text-soft); line-height: 1.5; margin: 0; flex: 1; }
+  .cheat-card .cc-use { font-size: 11px; color: var(--muted); margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+
+  .callout { background:var(--accent-soft); border-left:4px solid var(--accent); border-radius:8px; padding:16px 18px; margin:24px 0; font-size:15px; color:var(--text); line-height:1.7; }
+  .callout b { color:var(--accent); }
+
+  pre.block-code { background:var(--code-bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin:18px 0; font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--code-text); line-height:1.75; overflow-x:auto; }
+  pre.block-code .k { color:var(--code-k); }
+  pre.block-code .v { color:var(--code-v); }
+  pre.block-code .s { color:var(--code-s); }
+  pre.block-code .c { color:var(--code-c); font-style:italic; }
+
+  /* ============ FOOTER ============ */
+  footer.site { border-top:1px solid var(--border); padding:40px 0 60px; margin-top:40px; text-align:center; }
+  footer.site .prev-next { display:grid; grid-template-columns:1fr; gap:14px; max-width:760px; margin:0 auto 30px; }
+  @media (min-width: 680px) { footer.site .prev-next { grid-template-columns:1fr 1fr; } }
+  footer.site .nx { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:20px; box-shadow:var(--shadow); text-decoration:none; color:inherit; transition:all .2s; display:block; text-align:left; }
+  footer.site .nx:hover { border-color:var(--primary); transform:translateY(-2px); }
+  footer.site .nx-label { font-family:"IBM Plex Mono",monospace; font-size:12px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:8px; }
+  footer.site .nx-name { font-family:"Mitr",sans-serif; font-size:20px; font-weight:600; margin-bottom:6px; }
+  footer.site .nx-name .p { color:var(--primary); font-family:"IBM Plex Mono",monospace; font-size:16px; }
+  footer.site .nx-desc { font-size:13px; color:var(--text-soft); margin:0; }
+  footer.site .nx.next { text-align:right; }
+  footer.site .credit { font-size:13px; color:var(--muted); }
+  footer.site .credit a { color:var(--accent); text-decoration:none; }
+
+  .progress-line { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg,var(--primary),var(--accent)); width:0%; z-index:100; transition:width .1s linear; }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--text); color:var(--bg);
+    padding:10px 18px; border-radius:999px;
+    font-family:"IBM Plex Mono",monospace; font-size:13px;
+    box-shadow:var(--shadow-lg); z-index:200;
+    opacity:0; pointer-events:none;
+    transition:all .3s cubic-bezier(.4,0,.2,1);
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ============ SIDEBAR ============ */
+  .sidebar-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 150; opacity: 0; pointer-events: none; transition: opacity .3s ease; }
+  .sidebar-overlay.show { opacity: 1; pointer-events: auto; }
+  .sidebar { position: fixed; top: 0; left: -260px; width: 260px; height: 100vh; background: var(--surface); border-right: 1px solid var(--border); z-index: 160; transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; box-shadow: var(--shadow-lg); }
+  .sidebar.show { transform: translateX(260px); }
+  .sidebar-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--surface-2); }
+  .sidebar-header .brand { font-size: 15px; font-weight: 600; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .sidebar-close { background: none; border: none; color: var(--text-soft); font-size: 24px; cursor: pointer; padding: 4px; display: flex; align-items: center; justify-content: center; transition: color .2s; }
+  .sidebar-close:hover { color: var(--primary); }
+  .sidebar-nav { padding: 20px 12px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; flex: 1; }
+  .sidebar-nav .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; color: var(--text-soft); text-decoration: none; border-left: 3px solid transparent; border-radius: 0 8px 8px 0; margin-right: 8px; font-size: 14.5px; transition: all .2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .sidebar-nav .nav-item:hover { background: var(--surface-2); color: var(--text); padding-left: 18px; border-left-color: var(--border-strong); }
+  .sidebar-nav .nav-item.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; border-left-color: var(--primary); }
+  .sidebar-nav .nav-item.active:hover { padding-left: 14px; }
+  .sidebar-nav .nav-item .n { font-family: "IBM Plex Mono", monospace; font-size: 12.5px; color: var(--muted); }
+  .sidebar-nav .nav-item.active .n { color: var(--primary); }
+  .sidebar-nav .nav-section-title { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin: 14px 0 6px 14px; }
+  .brand-logo-icon { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; background:var(--primary); color:#fff; border-radius:7px; font-size:14px; }
+  @media (min-width: 1200px) {
+    body { padding-left: 260px; transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    body.sidebar-collapsed { padding-left: 72px; }
+    .sidebar { left: 0; transform: none; box-shadow: none; z-index: 170; width: 260px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); overflow-x: hidden; }
+    body.sidebar-collapsed .sidebar { width: 72px; }
+    body.sidebar-collapsed .sidebar:hover { width: 260px; box-shadow: var(--shadow-lg); }
+    .sidebar-overlay, .sidebar-close { display: none !important; }
+    nav.topbar .brand-mark { cursor: pointer; }
+    
+    /* Fix inner width so content doesn't wrap/squish during transition */
+    .sidebar-header, .sidebar-nav { width: 260px; }
+    
+    /* Collapsed sidebar state adjustments */
+    body.sidebar-collapsed .sidebar .brand-txt,
+    body.sidebar-collapsed .sidebar .nav-item .t,
+    body.sidebar-collapsed .sidebar .nav-section-title {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0s 0.2s;
+    }
+    body.sidebar-collapsed .sidebar .nav-item {
+      padding-left: 25px; /* Shift icon to center of 72px */
+    }
+    body.sidebar-collapsed .sidebar .sidebar-header {
+      padding-left: 22px; /* Shift logo to center of 72px */
+    }
+    
+    /* Hovered Collapsed sidebar state */
+    body.sidebar-collapsed .sidebar:hover .brand-txt,
+    body.sidebar-collapsed .sidebar:hover .nav-item .t,
+    body.sidebar-collapsed .sidebar:hover .nav-section-title {
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.3s ease 0.1s, visibility 0s 0s;
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item {
+      padding-left: 14px; /* Return to original padding */
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item:hover {
+      padding-left: 18px;
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item.active {
+      padding-left: 14px;
+    }
+    body.sidebar-collapsed .sidebar:hover .nav-item.active:hover {
+      padding-left: 14px;
+    }
+    body.sidebar-collapsed .sidebar:hover .sidebar-header {
+      padding-left: 18px; /* Return to original padding */
+    }
+    
+    /* Collapsible brand text on desktop topbar */
+    nav.topbar .brand-txt, nav.topbar .sep { display: none; }
+    body.sidebar-collapsed nav.topbar .brand-txt, body.sidebar-collapsed nav.topbar .sep { display: inline; }
+  }
+</style>
+</head>
+<body>
+<div class="progress-line" id="progress"></div>
+
+<!-- SIDEBAR MENU -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a class="brand" href="index.html">
+      <span class="brand-logo-icon">🧪</span>
+      <span class="brand-txt">CSS Flexbox Lab</span>
+    </a>
+    <button class="sidebar-close" id="sidebarClose" aria-label="ปิดเมนู">&times;</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="index.html" class="nav-item home-item"><span class="n">🏠</span> <span class="t">หน้าแรก</span></a>
+    <div class="nav-section-title">Properties</div>
+    <a href="display.html" class="nav-item display-item"><span class="n">01</span> <span class="t">display</span></a>
+    <a href="flex-direction.html" class="nav-item direction-item"><span class="n">02</span> <span class="t">flex-direction</span></a>
+    <a href="flex-wrap.html" class="nav-item wrap-item active"><span class="n">03</span> <span class="t">flex-wrap</span></a>
+    <a href="flex-flow.html" class="nav-item flow-item"><span class="n">04</span> <span class="t">flex-flow</span></a>
+    <a href="justify-content.html" class="nav-item justify-item"><span class="n">05</span> <span class="t">justify-content</span></a>
+    <a href="align-items.html" class="nav-item align-item"><span class="n">06</span> <span class="t">align-items</span></a>
+  </nav>
+</aside>
+
+<nav class="topbar">
+  <a class="brand" href="index.html">
+    <span class="brand-mark">≡</span>
+    <span class="brand-txt">CSS Flexbox Lab</span>
+    <span class="sep">/</span>
+    <span class="prop-name">flex-wrap</span>
+  </a>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="themeBtn" aria-label="สลับธีม">
+      <span id="themeIcon">☀️</span>
+      <span id="themeLabel">Dark</span>
+    </button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div class="eyebrow"><span class="dot"></span>CSS FLEXBOX · PROPERTY LAB #2</div>
+    <h1 class="title"><span class="brace">{</span> <span class="name">flex-wrap</span> <span class="brace">}</span></h1>
+    <p class="lede">
+      ตัวกำหนดว่าเมื่อพื้นที่ไม่พอ <b>items จะยังอยู่บรรทัดเดิม (บีบตัว)</b> หรือ
+      <b>ขึ้นบรรทัดใหม่</b> — ลากปรับความกว้างใน playground แล้วจะเห็น items ห่อ/คลี่แบบสดๆ
+    </p>
+    <div class="hero-meta">
+      <span>🎮 <b>6 โซน</b> อินเทอร์แอกทีฟ</span>
+      <span>🎯 <b>3 ค่า</b> หลัก</span>
+      <span>⚡ <b>ลาก · คลิก · ทาย</b> ได้หมด</span>
+    </div>
+  </header>
+
+  <!-- ============ MEGA PLAYGROUND ============ -->
+  <div class="mega">
+    <div class="mega-header">
+      <div class="mega-title"><div class="mega-dots"><span></span><span></span><span></span></div> playground.html</div>
+      <div class="mega-actions">
+        <button class="mega-btn" id="resetBtn">↺ Reset</button>
+      </div>
+    </div>
+    <div class="mega-body">
+      <div class="mega-stage">
+        <div class="stage-frame" id="stageFrame" style="--stage-w:440px">
+          <div class="demo" id="megaDemo"></div>
+          <div class="resize-handle" id="resizeHandle" title="ลากเพื่อปรับความกว้าง"></div>
+          <div class="resize-hint">← ลากฉัน (ดู items ห่อ)</div>
+          <div class="width-readout" id="widthReadout">440px</div>
+        </div>
+      </div>
+      <div class="mega-panel">
+        <div class="pg-group">
+          <label>flex-wrap <span class="hint">ค่าหลัก</span></label>
+          <div class="pg-btns three" data-prop="wrap">
+            <button data-value="nowrap">nowrap</button>
+            <button data-value="wrap" class="active">wrap</button>
+            <button data-value="wrap-reverse">wrap-reverse</button>
+          </div>
+        </div>
+        <div class="pg-group">
+          <label>items <span class="hint">จำนวนกล่อง</span></label>
+          <div class="pg-counter">
+            <button id="itemMinus">−</button>
+            <span class="count" id="itemCount">8</span>
+            <button id="itemPlus">+</button>
+          </div>
+        </div>
+        <div class="pg-group">
+          <label>ความกว้าง <span class="hint">หรือลากจุดแดง</span></label>
+          <div class="pg-counter">
+            <button id="widthShrink" title="แคบลง">«</button>
+            <span class="count" id="widthLabel">440</span>
+            <button id="widthWiden" title="กว้างขึ้น">»</button>
+          </div>
+        </div>
+        <div class="pg-code" id="megaCode">
+          <button class="copy-btn" id="copyBtn">copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 01: 3 VALUES ============ -->
+  <section class="block">
+    <div class="section-num">01 ·</div>
+    <h2>ค่าทั้ง <span class="accent">3 ค่า</span> — <span style="font-size:14px;color:var(--muted);font-family:'IBM Plex Mono',monospace">คลิกการ์ดเพื่อส่งขึ้น playground ↑</span></h2>
+    <p class="lead">
+      <code>flex-wrap</code> มีค่าให้เลือกแค่ <b>3 ค่า</b> — จำง่ายมาก: เลือกว่า
+      เมื่อพื้นที่ไม่พอ จะ <b>ไม่ห่อ</b>, <b>ห่อลงมาข้างล่าง</b> หรือ <b>ห่อขึ้นไปข้างบน</b>
+    </p>
+
+    <div class="values-grid" id="valueCards">
+      <div class="value-card" data-value="nowrap">
+        <span class="vc-try">↑ ลองใน playground</span>
+        <div class="vc-head"><span class="vc-name">nowrap</span><span class="vc-arrow">↔</span></div>
+        <div class="vc-demo"><div class="vc-mini" style="flex-wrap:nowrap"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i></div></div>
+        <p class="vc-desc"><b>ค่าเริ่มต้น</b> — items บีบตัวจนแคบ ยังอยู่บรรทัดเดียว</p>
+      </div>
+      <div class="value-card selected" data-value="wrap">
+        <span class="vc-try">↑ ลองใน playground</span>
+        <div class="vc-head"><span class="vc-name">wrap</span><span class="vc-arrow">⤵</span></div>
+        <div class="vc-demo"><div class="vc-mini" style="flex-wrap:wrap"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i></div></div>
+        <p class="vc-desc">พื้นที่ไม่พอแล้ว <b>ขึ้นบรรทัดใหม่</b> ด้านล่าง</p>
+      </div>
+      <div class="value-card" data-value="wrap-reverse">
+        <span class="vc-try">↑ ลองใน playground</span>
+        <div class="vc-head"><span class="vc-name">wrap-reverse</span><span class="vc-arrow">⤴</span></div>
+        <div class="vc-demo"><div class="vc-mini" style="flex-wrap:wrap-reverse"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i></div></div>
+        <p class="vc-desc">เหมือน <code>wrap</code> แต่ <b>ห่อกลับด้าน</b> — บรรทัดใหม่อยู่ด้านบน</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      💡 <b>จำง่าย:</b> <code>nowrap</code> = ห้ามขึ้นบรรทัดใหม่, <code>wrap</code> = ห่อลงล่าง (ค่าที่ใช้บ่อยสุด), <code>wrap-reverse</code> = ห่อกลับด้าน — ค่าเริ่มต้นคือ <code>nowrap</code> นะ อย่าลืม!
+    </div>
+  </section>
+
+  <!-- ============ SECTION 02: nowrap vs wrap ============ -->
+  <section class="block">
+    <div class="section-num">02 ·</div>
+    <h2>nowrap vs wrap — <span class="accent">หัวใจของเรื่อง</span></h2>
+    <p class="lead">
+      ลองเลื่อน <b>ความกว้าง</b> ของ container ดู — เมื่อพื้นที่ไม่พอ
+      <b>nowrap</b> จะบีบ items จนแคบ ส่วน <b>wrap</b> จะย้าย items ไปบรรทัดใหม่
+    </p>
+
+    <div class="compare-wrap">
+      <div class="compare-controls">
+        <span class="lbl">ความกว้าง:</span>
+        <div class="compare-slider">
+          <input type="range" id="compareRange" min="160" max="640" value="440" />
+          <span class="width-val" id="compareWidthVal">440px</span>
+        </div>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-col">
+          <span class="compare-tag nowrap">⚠️ flex-wrap: nowrap</span>
+          <div class="compare-stage">
+            <div class="demo" id="compareNowrap" style="flex-wrap:nowrap">
+              <div class="item">1</div><div class="item">2</div><div class="item">3</div>
+              <div class="item">4</div><div class="item">5</div><div class="item">6</div>
+              <div class="item">7</div><div class="item">8</div>
+            </div>
+          </div>
+          <p class="compare-note">8 items ทั้งหมดถูก <b>บีบ</b>ให้อยู่ในบรรทัดเดียว — กล่องแคบจนแทบอ่านไม่ออก</p>
+        </div>
+        <div class="compare-col">
+          <span class="compare-tag wrap">✓ flex-wrap: wrap</span>
+          <div class="compare-stage">
+            <div class="demo" id="compareWrap" style="flex-wrap:wrap">
+              <div class="item">1</div><div class="item">2</div><div class="item">3</div>
+              <div class="item">4</div><div class="item">5</div><div class="item">6</div>
+              <div class="item">7</div><div class="item">8</div>
+            </div>
+          </div>
+          <p class="compare-note">items ยัง <b>ขนาดเดิม</b> แต่พอไม่พอก็ <b>ขึ้นบรรทัดใหม่</b> — อ่านง่าย ไม่บีบตัว</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      🎯 <b>นี่คือเหตุผลที่ต้องใช้ <code>flex-wrap</code>:</b> ถ้าอยากให้กล่องคงขนาดเดิมเสมอ (เช่น tag, รูป, ปุ่ม) ให้ใช้ <code>wrap</code>
+      ถ้าอยากให้กล่องยืด-หดตามพื้นที่ (เช่น card layout แบบเท่ากัน) ใช้ <code>nowrap</code>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 03: GUESS GAME ============ -->
+  <section class="block">
+    <div class="section-num">03 · 🎮</div>
+    <h2>เกมทายค่า — <span class="accent">Guess the Wrap</span></h2>
+    <p class="lead">ดูผลลัพธ์ในกล่อง "เป้าหมาย" แล้วทายว่าใช้ <code>flex-wrap</code> ค่าไหน — ทายถูกให้คะแนน!</p>
+
+    <div class="game">
+      <div class="game-head">
+        <h3 style="margin:0">🎯 รอบที่ <span id="roundNum">1</span></h3>
+        <div class="game-score">คะแนน: <b id="scoreNum">0</b>/<span id="totalNum">0</span></div>
+      </div>
+      <p class="game-prompt" id="gamePrompt">กล่องด้านซ้ายคือ "เป้าหมาย" — เลือกคำตอบให้ตรงกับมัน</p>
+
+      <div class="game-target-wrap">
+        <div class="game-box">
+          <div class="game-box-label">🎯 เป้าหมาย</div>
+          <div class="game-stage">
+            <div class="demo" id="gameTarget"></div>
+          </div>
+        </div>
+        <div class="game-box">
+          <div class="game-box-label">✅ คำตอบของคุณ</div>
+          <div class="game-stage">
+            <div class="demo" id="gameUser"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="game-choices" id="gameChoices">
+        <button data-value="nowrap">nowrap</button>
+        <button data-value="wrap">wrap</button>
+        <button data-value="wrap-reverse">wrap-reverse</button>
+      </div>
+
+      <div class="game-feedback" id="gameFeedback"></div>
+      <button class="game-next" id="gameNext">ถัดไป →</button>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 04: SCENARIOS ============ -->
+  <section class="block">
+    <div class="section-num">04 ·</div>
+    <h2>ใช้จริงใน <span class="accent">4 สถานการณ์</span></h2>
+    <p class="lead">คลิกแต่ละสถานการณ์เพื่อดูว่าใช้ <code>flex-wrap</code> ค่าไหน พร้อมตัวอย่างจริง</p>
+
+    <div class="scenarios" id="scenarios">
+      <button class="scn-btn active" data-scn="tags"><span class="ic">🏷️</span><span class="nm">tag list</span></button>
+      <button class="scn-btn" data-scn="gallery"><span class="ic">🖼️</span><span class="nm">gallery</span></button>
+      <button class="scn-btn" data-scn="toolbar"><span class="ic">🔧</span><span class="nm">toolbar</span></button>
+      <button class="scn-btn" data-scn="chips"><span class="ic">📌</span><span class="nm">chip cloud</span></button>
+    </div>
+
+    <div class="scn-detail" id="scnDetail"><!-- ใส่ด้วย JS --></div>
+  </section>
+
+  <!-- ============ SECTION 05: PITFALLS ============ -->
+  <section class="block">
+    <div class="section-num">05 ·</div>
+    <h2>จุดที่คน <span class="accent">พลาดบ่อย</span> ⚠️</h2>
+
+    <div class="pitfalls">
+      <div class="pitfall">
+        <h4><span class="ic">①</span> <code>nowrap</code> ทำให้ items บีบจนแคบ</h4>
+        <p>ค่าเริ่มต้นของ <code>flex-wrap</code> คือ <code>nowrap</code> — หลายคนคาดไม่ถึงเพราะพอ items เยอะเกิน มันจะ<b>บีบตัวจนแคบ</b>แทนที่จะขึ้นบรรทัดใหม่ ถ้าไม่อยากให้บีบ อย่าลืมใส่ <code>flex-wrap: wrap</code></p>
+      </div>
+      <div class="pitfall">
+        <h4><span class="ic">②</span> <code>wrap-reverse</code> ไม่ได้กลับด้านแบบ <code>flex-direction</code></h4>
+        <p>มัน<b>ไม่ได้กลับทิศเรียง items</b> แค่<b>กลับทิศการห่อ</b>เท่านั้น — คือบรรทัดใหม่จะไปอยู่ด้าน<b>บน</b>แทนด้านล่าง แต่ลำดับ items ภายในบรรทัดยังเป็นซ้ายไปขวาเหมือนเดิม</p>
+      </div>
+      <div class="pitfall">
+        <h4><span class="ic">③</span> <code>align-content</code> ทำงานต่อเมื่อมีหลายบรรทัด</h4>
+        <p>ถ้าใช้ <code>nowrap</code> จะมีแค่บรรทัดเดียว <code>align-content</code> จึง<b>ไม่ทำอะไรเลย</b> — ต้องใช้คู่กับ <code>flex-wrap: wrap</code> และมี items พอที่จะขึ้นหลายบรรทัดถึงจะเห็นผล</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 06: CHEATSHEET ============ -->
+  <section class="block">
+    <div class="section-num">06 ·</div>
+    <h2>Cheatsheet <span class="accent">30 วินาที</span> 📋</h2>
+
+    <div class="cheatsheet">
+      <h3 style="margin-top:0">สรุป <code style="font-family:'IBM Plex Mono',monospace;color:var(--primary);font-size:16px">flex-wrap</code></h3>
+      <div class="cheat-grid">
+        <div class="cheat-card" data-val="nowrap">
+          <div class="cc-head"><span class="cc-val">nowrap</span><span class="cc-tag">บีบแคบ · ไม่ขึ้นบรรทัด</span></div>
+          <div class="cc-demo" style="flex-wrap:nowrap"><div class="cci" style="flex:0 0 35%">1</div><div class="cci" style="flex:0 0 35%">2</div><div class="cci" style="flex:0 0 35%">3</div><div class="cci" style="flex:0 0 35%">4</div></div>
+          <p class="cc-desc">ไอเท็มจะถูกบีบให้พอดีกับแถวเดียว</p>
+          <div class="cc-use">toolbar · nav bar · ต้องการแถวเดียวเสมอ</div>
+        </div>
+        <div class="cheat-card" data-val="wrap">
+          <div class="cc-head"><span class="cc-val">wrap</span><span class="cc-tag">พื้นที่หมด · ปัดลงล่าง</span></div>
+          <div class="cc-demo" style="flex-wrap:wrap;align-content:flex-start"><div class="cci" style="flex:0 0 35%">1</div><div class="cci" style="flex:0 0 35%">2</div><div class="cci" style="flex:0 0 35%">3</div><div class="cci" style="flex:0 0 35%">4</div></div>
+          <p class="cc-desc">ล้นแล้วขึ้นบรรทัดใหม่ด้านล่าง</p>
+          <div class="cc-use">tag · gallery · responsive layout</div>
+        </div>
+        <div class="cheat-card" data-val="wrap-reverse">
+          <div class="cc-head"><span class="cc-val">wrap-reverse</span><span class="cc-tag">พื้นที่หมด · ปัดขึ้นบน</span></div>
+          <div class="cc-demo" style="flex-wrap:wrap-reverse;align-content:flex-start"><div class="cci" style="flex:0 0 35%">1</div><div class="cci" style="flex:0 0 35%">2</div><div class="cci" style="flex:0 0 35%">3</div><div class="cci" style="flex:0 0 35%">4</div></div>
+          <p class="cc-desc">ล้นแล้วขึ้นบรรทัดใหม่ด้านบน (กลับทิศการห่อ)</p>
+          <div class="cc-use">ลำดับกลับด้าน · เคสพิเศษ</div>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding-top:18px;border-top:1px dashed var(--border)">
+        <p style="margin:0;font-size:14px;color:var(--text-soft)"><b style="color:var(--primary)">จำไว้ 3 ข้อ:</b></p>
+        <ol style="margin:8px 0 0;padding-left:22px;font-size:14px;color:var(--text-soft);line-height:1.8">
+          <li><b>ค่าเริ่มต้น</b>คือ <code>nowrap</code> — ถ้าไม่ระบุ items จะถูกบีบ</li>
+          <li><code>wrap</code> เปิดให้ <code>align-content</code> ทำงานได้</li>
+          <li><code>wrap-reverse</code> กลับ<b>ทิศการห่อ</b> ไม่ใช่ทิศการเรียง</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="prev-next">
+      <a class="nx" href="flex-direction.html">
+        <div class="nx-label">← ก่อนหน้า</div>
+        <div class="nx-name"><span class="p">flex-direction</span></div>
+        <p class="nx-desc">ทิศทางหลักของไอเท็ม</p>
+      </a>
+      <a class="nx next" href="flex-flow.html">
+        <div class="nx-label">ถัดไป →</div>
+        <div class="nx-name"><span class="p">flex-flow</span></div>
+        <p class="nx-desc">ช็อตคัตตั้งค่า 2 อย่างพร้อมกัน</p>
+      </a>
+    </div>
+    <p class="credit">CSS Flexbox Lab · อ้างอิง <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/flex-wrap" target="_blank" rel="noopener">MDN</a> · ทำด้วย ❤️</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast">คัดลอกแล้ว ✓</div>
+
+<script>
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function hl(prop, value) {
+  const vals = value.split(' ').map(v => `<span class="v">${v}</span>`).join(' ');
+  return `<span class="k">${prop}</span><span class="s">:</span> ${vals}<span class="s">;</span>`;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e2) {}
+    document.body.removeChild(ta);
+    return true;
+  }
+}
+
+/* ============================================================
+   MEGA PLAYGROUND STATE
+   ============================================================ */
+const state = {
+  wrap: 'wrap',
+  itemCount: 8,
+  width: 440,
+};
+
+const megaDemo = document.getElementById('megaDemo');
+const megaCode = document.getElementById('megaCode');
+const stageFrame = document.getElementById('stageFrame');
+const widthReadout = document.getElementById('widthReadout');
+
+function renderItems(container, n) {
+  container.innerHTML = '';
+  for (let i = 1; i <= n; i++) {
+    const it = document.createElement('div');
+    it.className = 'item';
+    it.textContent = i;
+    container.appendChild(it);
+  }
+}
+
+function applyWidth(w) {
+  state.width = w;
+  stageFrame.style.setProperty('--stage-w', w + 'px');
+  widthReadout.textContent = w + 'px';
+  document.getElementById('widthLabel').textContent = w;
+}
+
+function renderMega() {
+  megaDemo.style.flexWrap = state.wrap;
+  megaDemo.style.flexDirection = 'row'; /* fixed row so wrap behavior is clear */
+
+  renderItems(megaDemo, state.itemCount);
+
+  // sync button states
+  document.querySelectorAll('.pg-btns').forEach(group => {
+    const prop = group.dataset.prop;
+    group.querySelectorAll('button').forEach(b => {
+      b.classList.toggle('active', b.dataset.value === state[prop]);
+    });
+  });
+
+  // code
+  const codeText =
+`.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: ${state.wrap};
+}`;
+  megaCode.innerHTML =
+    '<button class="copy-btn" id="copyBtn">copy</button>' +
+    `<span class="c">.container {</span>\n` +
+    `  <span class="k">display</span><span class="s">:</span> <span class="v">flex</span><span class="s">;</span>\n` +
+    `  <span class="k">flex-direction</span><span class="s">:</span> <span class="v">row</span><span class="s">;</span>\n` +
+    `  ${hl('flex-wrap', state.wrap)}\n` +
+    `<span class="c">}</span>`;
+  megaCode._text = codeText;
+
+  // re-bind copy
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    await copyText(codeText);
+    const b = document.getElementById('copyBtn');
+    b.textContent = '✓ copied'; b.classList.add('copied');
+    showToast('คัดลอกโค้ดแล้ว ✓');
+    setTimeout(() => { b.textContent = 'copy'; b.classList.remove('copied'); }, 1500);
+  });
+
+  // item counter
+  document.getElementById('itemCount').textContent = state.itemCount;
+  document.getElementById('itemMinus').disabled = state.itemCount <= 1;
+  document.getElementById('itemPlus').disabled = state.itemCount >= 14;
+
+  // sync value cards
+  document.querySelectorAll('.value-card').forEach(c => {
+    c.classList.toggle('selected', c.dataset.value === state.wrap);
+  });
+
+  // update width readout + label
+  widthReadout.textContent = state.width + 'px';
+  document.getElementById('widthLabel').textContent = state.width;
+}
+
+// bind wrap buttons
+document.querySelectorAll('.pg-btns').forEach(group => {
+  const prop = group.dataset.prop;
+  group.addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    state[prop] = btn.dataset.value;
+    renderMega();
+  });
+});
+
+// counter
+document.getElementById('itemMinus').addEventListener('click', () => {
+  if (state.itemCount > 1) { state.itemCount--; renderMega(); }
+});
+document.getElementById('itemPlus').addEventListener('click', () => {
+  if (state.itemCount < 14) { state.itemCount++; renderMega(); }
+});
+
+// width buttons
+document.getElementById('widthShrink').addEventListener('click', () => {
+  applyWidth(Math.max(180, state.width - 40));
+});
+document.getElementById('widthWiden').addEventListener('click', () => {
+  applyWidth(Math.min(640, state.width + 40));
+});
+
+// reset
+document.getElementById('resetBtn').addEventListener('click', () => {
+  Object.assign(state, { wrap: 'wrap', itemCount: 8, width: 440 });
+  applyWidth(440);
+  renderMega();
+  showToast('รีเซ็ตแล้ว ↺');
+});
+
+// RESIZE HANDLE (drag to change width — essential for wrap/unwrap demo)
+(() => {
+  const handle = document.getElementById('resizeHandle');
+  let dragging = false, startX = 0, startW = 440;
+  handle.addEventListener('pointerdown', e => {
+    dragging = true; startX = e.clientX;
+    startW = state.width;
+    handle.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  handle.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const newW = Math.max(180, Math.min(640, startW + dx));
+    applyWidth(newW);
+  });
+  handle.addEventListener('pointerup', e => {
+    dragging = false;
+    try { handle.releasePointerCapture(e.pointerId); } catch (err) {}
+  });
+})();
+
+applyWidth(440);
+renderMega();
+
+/* ============================================================
+   VALUE CARDS → push to playground
+   ============================================================ */
+document.querySelectorAll('.value-card').forEach(card => {
+  card.addEventListener('click', () => {
+    state.wrap = card.dataset.value;
+    renderMega();
+    window.scrollTo({ top: document.querySelector('.mega').offsetTop - 80, behavior: 'smooth' });
+    showToast('ส่งขึ้น playground ↑');
+  });
+});
+
+/* ============================================================
+   COMPARISON: nowrap vs wrap (slider controls width of BOTH)
+   ============================================================ */
+const compareRange = document.getElementById('compareRange');
+const compareWidthVal = document.getElementById('compareWidthVal');
+const compareNowrap = document.getElementById('compareNowrap');
+const compareWrap = document.getElementById('compareWrap');
+
+function applyCompare(w) {
+  compareNowrap.style.maxWidth = w + 'px';
+  compareWrap.style.maxWidth = w + 'px';
+  compareWidthVal.textContent = w + 'px';
+}
+
+compareRange.addEventListener('input', e => {
+  applyCompare(parseInt(e.target.value, 10));
+});
+applyCompare(440);
+
+/* ============================================================
+   GUESS GAME
+   ============================================================ */
+const VALUES = ['nowrap', 'wrap', 'wrap-reverse'];
+const VAL_LABEL = { 'nowrap':'nowrap', 'wrap':'wrap', 'wrap-reverse':'wrap-reverse' };
+const game = {
+  round: 1,
+  score: 0,
+  total: 0,
+  target: 'wrap',
+  answered: false,
+};
+
+const gameTarget = document.getElementById('gameTarget');
+const gameUser = document.getElementById('gameUser');
+const gameFeedback = document.getElementById('gameFeedback');
+const gameNext = document.getElementById('gameNext');
+const gameChoices = document.getElementById('gameChoices');
+
+function makeItems(container, n) {
+  container.innerHTML = '';
+  for (let i = 1; i <= n; i++) {
+    const it = document.createElement('div');
+    it.className = 'item';
+    it.textContent = i;
+    container.appendChild(it);
+  }
+}
+
+function newRound() {
+  game.answered = false;
+  game.target = VALUES[Math.floor(Math.random() * VALUES.length)];
+  const n = 6; /* fixed 6 items so wrapping is always visible */
+  gameTarget.style.flexWrap = game.target;
+  gameTarget.style.flexDirection = 'row';
+  gameTarget.style.maxWidth = '280px'; /* narrow to force wrap */
+  gameUser.style.flexWrap = 'nowrap';
+  gameUser.style.flexDirection = 'row';
+  gameUser.style.maxWidth = '280px';
+  makeItems(gameTarget, n);
+  makeItems(gameUser, n);
+  gameFeedback.classList.remove('show', 'win', 'lose');
+  gameNext.classList.remove('show');
+  gameChoices.querySelectorAll('button').forEach(b => {
+    b.disabled = false;
+    b.classList.remove('correct', 'wrong');
+  });
+  document.getElementById('roundNum').textContent = game.round;
+}
+
+gameChoices.addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn || game.answered) return;
+  game.answered = true;
+  game.total++;
+  const val = btn.dataset.value;
+  gameUser.style.flexWrap = val;
+
+  gameChoices.querySelectorAll('button').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.value === game.target) b.classList.add('correct');
+  });
+
+  if (val === game.target) {
+    game.score++;
+    gameFeedback.textContent = `✓ ถูกต้อง! เป้าหมายคือ ${VAL_LABEL[game.target]} — เก่งมาก!`;
+    gameFeedback.className = 'game-feedback win show';
+  } else {
+    btn.classList.add('wrong');
+    gameFeedback.textContent = `✗ ยังไม่ถูก — เป้าหมายคือ ${VAL_LABEL[game.target]} (คุณเลือก ${val})`;
+    gameFeedback.className = 'game-feedback lose show';
+  }
+  document.getElementById('scoreNum').textContent = game.score;
+  document.getElementById('totalNum').textContent = game.total;
+  gameNext.classList.add('show');
+});
+
+gameNext.addEventListener('click', () => { game.round++; newRound(); });
+newRound();
+
+/* ============================================================
+   SCENARIOS
+   ============================================================ */
+const SCN_DATA = {
+  tags: {
+    icon: '🏷️', name: 'Tag List / รายการแท็ก',
+    value: 'wrap',
+    desc: 'แท็กจำนวนไม่แน่นอน ขนาดไม่เท่ากัน — ใช้ wrap เพื่อให้แท็กไหลลงบรรทัดใหม่เองโดยไม่บีบตัว',
+    render: () => {
+      const tags = ['#frontend','#css','#flexbox','#responsive','#design','#ui','#html','#layout','#grid','#mobile'];
+      return `<div class="demo scn-tags" style="display:flex;flex-wrap:wrap">${tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`;
+    },
+    code: `.tag-list {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n}`,
+  },
+  gallery: {
+    icon: '🖼️', name: 'Image Gallery / แกลเลอรี',
+    value: 'wrap',
+    desc: 'กริดรูปภาพที่ต้องการให้รูปคงขนาดเท่ากัน และไหลลงบรรทัดใหม่เมื่อหน้าจอแคบ — wrap ทำให้ responsive อัตโนมัติ',
+    render: () => `<div class="demo scn-gallery" style="display:flex;flex-wrap:wrap">${Array.from({length:7},(_,i)=>`<div class="tile">${i+1}</div>`).join('')}</div>`,
+    code: `.gallery {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 8px;\n}\n.gallery .tile {\n  flex: 0 0 70px; /* ขนาดคงที่ */\n}`,
+  },
+  toolbar: {
+    icon: '🔧', name: 'Toolbar Buttons / แถบเครื่องมือ',
+    value: 'nowrap',
+    desc: 'ปุ่มเครื่องมือ editor ที่ต้องการอยู่ด้วยกันในแถบเดียวเสมอ ถึงจะแคบก็ตาม — ใช้ nowrap (ค่าเริ่มต้น)',
+    render: () => `<div class="demo scn-toolbar" style="display:flex;flex-wrap:nowrap"><span class="tbtn">B</span><span class="tbtn"><i>I</i></span><span class="tbtn">U</span><span class="sep"></span><span class="tbtn">≡</span><span class="tbtn">⇄</span><span class="tbtn">⊕</span></div>`,
+    code: `.toolbar {\n  display: flex;\n  flex-wrap: nowrap; /* default */\n  gap: 4px;\n}`,
+  },
+  chips: {
+    icon: '📌', name: 'Chip Cloud / กลุ่มชิป',
+    value: 'wrap',
+    desc: 'ชิปหรือหมวดหมู่จำนวนมากที่ผู้ใช้สามารถเพิ่มได้เรื่อยๆ — wrap ทำให้แสดงได้ครบโดยไม่กระโดดออกจากหน้าจอ',
+    render: () => {
+      const chips = ['UX','Performance','A11y','i18n','SEO','Animations','Testing','Tooling','State','Routing','Forms','Hooks'];
+      return `<div class="demo scn-tags" style="display:flex;flex-wrap:wrap">${chips.map(c=>`<span class="tag">${c}</span>`).join('')}</div>`;
+    },
+    code: `.chip-cloud {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 6px;\n}`,
+  },
+};
+
+function renderScenario(key) {
+  const s = SCN_DATA[key];
+  document.getElementById('scnDetail').innerHTML = `
+    <div class="scn-head">
+      <span class="ic">${s.icon}</span>
+      <h4>${s.name}</h4>
+      <span class="val">flex-wrap: ${s.value}</span>
+    </div>
+    <p>${s.desc}</p>
+    <div class="scn-stage">${s.render()}</div>
+    <pre class="block-code" style="margin-top:14px;margin-bottom:0">${s.code.replace(/(&)/g,'&amp;').replace(/(<)/g,'&lt;').replace(/(>)/g,'&gt;')}</pre>
+  `;
+  document.querySelectorAll('.scn-btn').forEach(b => b.classList.toggle('active', b.dataset.scn === key));
+}
+
+document.getElementById('scenarios').addEventListener('click', e => {
+  const btn = e.target.closest('.scn-btn');
+  if (!btn) return;
+  renderScenario(btn.dataset.scn);
+});
+renderScenario('tags');
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+const themeBtn = document.getElementById('themeBtn');
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeIcon').textContent = theme === 'dark' ? '🌙' : '☀️';
+  document.getElementById('themeLabel').textContent = theme === 'dark' ? 'Light' : 'Dark';
+  try { localStorage.setItem('flexlab-theme', theme); } catch (e) {}
+}
+let saved = 'light';
+try { saved = localStorage.getItem('flexlab-theme') || 'light'; } catch (e) {}
+applyTheme(saved);
+themeBtn.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  applyTheme(cur === 'dark' ? 'light' : 'dark');
+});
+
+/* ============================================================
+   SCROLL PROGRESS
+   ============================================================ */
+const progress = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+  progress.style.width = pct + '%';
+}, { passive: true });
+
+/* ============ SIDEBAR MENU TOGGLE ============ */
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebarOverlay');
+const sidebarClose = document.getElementById('sidebarClose');
+const brandMark = document.querySelector('.brand-mark');
+
+if (brandMark) {
+  brandMark.addEventListener('click', e => {
+    e.preventDefault();
+    if (window.innerWidth >= 1200) {
+      document.body.classList.toggle('sidebar-collapsed');
+    } else {
+      sidebar.classList.add('show');
+      sidebarOverlay.classList.add('show');
+    }
+  });
+}
+if (sidebarClose) {
+  sidebarClose.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    sidebarOverlay.classList.remove('show');
+  });
+}
+if (sidebarOverlay) {
+  sidebarOverlay.addEventListener('click', () => {
+    sidebar.classList.remove('show');
+    sidebarOverlay.classList.remove('show');
+  });
+}
+
+/* ============================================================
+   CHEATSHEET INTERACTION
+   ============================================================ */
+document.querySelectorAll('.cheat-card').forEach(card => {
+  card.addEventListener('click', () => {
+    state.wrap = card.dataset.val;
+    renderMega();
+    window.scrollTo({ top: document.querySelector('.mega').offsetTop - 80, behavior: 'smooth' });
+    showToast('ส่งค่าขึ้น playground ↑');
+  });
+});
+</script>
+</body>
+</html>
